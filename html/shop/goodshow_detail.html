@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>商品详情</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/fontcss/iconfont.css" />
+</head>
+<body>
+<div class="aui-content" id="app">
+    <div class="aui-card-list aui-shadow aui-padded-10" style=" margin:0;">
+    	<div class="aui-bg-list aui-margin-b-15 aui-padded-10 aui-font-size-14">
+        	<div class="aui-bg-black aui-text-white aui-padded-5  aui-text-center" style=" width:30%; margin:auto">产品介绍</div>
+        	<div class="aui-text-black aui-padded-5">商品名称：{{goods.name}}</div>
+
+        </div>
+        <p v-html="goods.content"></p>
+
+        <div class="aui-padded-10">
+            <div class="aui-btn aui-btn-block aui-btn-outlined aui-btn-sm" @click="change_tab()">查看评价</div>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/vue.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script>
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            id:0,
+            goods:'',
+        },
+        methods: {
+            init: function () {
+                api.ajax({
+                    url: goods_info_url,
+                    method: 'post',
+                    timeout: 30,
+                    dataType: 'json',
+                    returnAll: false,
+                    data: {
+                        values: {
+                            goods_id: vm.id,
+                            token:$api.getStorage('token')
+                        }
+                    }
+                }, function (ret, err) {
+                    if (ret) {
+                        console.log(JSON.stringify(ret));
+                        vm.goods = ret.data.goods;
+                    } else {
+                        console.log(JSON.stringify(err));
+                    }
+                });
+            },
+            change_tab:function () {
+                api.setFrameGroupIndex({
+                    name: 'goods_showfrm',
+                    index: 2,
+                    scroll: false
+                });
+            }
+        }
+    });
+    apiready = function () {
+        vm.id = api.pageParam.id;
+        vm.init();
+    };
+</script>

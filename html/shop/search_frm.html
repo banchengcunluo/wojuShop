@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>商品列表</title>
+    <link rel="stylesheet" type="text/css" href="../../css/fontcss/iconfont.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+</head>
+<style>
+.aui-list-item-title{height:45px;}
+</style>
+<body>
+<div class="aui-content" id="app" v-cloak>
+    <ul class="aui-list aui-media-list aui-padded-5" style="background:transparent;">
+        <li class="">
+            <div class="aui-row aui-row-padded">
+                <div class="aui-col-xs-6  aui-padded-5"
+                     v-for="(vo,index) in list"
+                     @click="open_goodshow_win(vo)">
+                    <div class="aui-bg-list aui-padded-5">
+                        <img :src="cover_url + vo.thumb">
+                        <div class="aui-list-item-title aui-font-size-14 aui-ellipsis-2 aui-padded-t-5">
+                            {{vo.name}}
+                        </div>
+                        <div class="aui-row">
+                            <div class="aui-col-xs-6 aui-text-danger aui-padded-5 aui-font-size-14">￥{{vo.market_price}}</div>
+                            <div class="aui-col-xs-6 aui-text-right"><span class="iconfont icon-gouwuche aui-font-size-20 aui-text-gray"></span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </li>
+    </ul>
+</div>
+</body>
+</html>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/vue.js"></script>
+<script type="text/javascript" src="../../script/vue.lazyimg.min.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script>
+    Vue.use(Lazyload, {
+        time: 200,
+        fade: false,//显示站位图片
+        nohori: true
+    });
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            cover_url:base_url,
+            keywords: '',
+            is_all: 1,
+            cate_id: 0,
+            brand_id:0,
+            is_new:0,
+            is_rec:0,
+            is_hot:0,
+            info:[],
+            list: [
+
+            ],
+            page:1,
+            pagesize:100,
+
+            UILoading:'',
+            FlowerID:''
+        },
+        methods: {
+            init: function () {
+                vm.open_flower();
+                api.ajax({
+                    url: goods_list_url,
+                    method: 'post',
+                    timeout: 30,
+                    dataType: 'json',
+                    returnAll: false,
+                    data: {
+                        values: {
+                            keywords: vm.keywords,
+                            page:vm.page,
+                            pagesize:vm.pagesize,
+                        }
+                    }
+                }, function (ret, err) {
+                    vm.close_flower();
+                    if (ret) {
+                        if (vm.page == 1) {
+                            vm.list = ret.data.list;
+                        } else {
+                            if(ret.data.list.length == 0 ){
+                                api.toast({
+                                    msg: '加载完成',
+                                    duration: 2000,
+                                    location: 'bottom'
+                                });
+                                return false;
+                            }
+                            for (var i = 0; i < ret.data.list.length; i++) {
+                                vm.list.push(ret.data.list[i]);
+                            }
+                        }
+
+                    } else {
+                        console.log(JSON.stringify(err));
+                    }
+                });
+            },
+            open_goodshow_win:function (vo) {
+
+                console.log(JSON.stringify(vo));
+
+                api.openWin({
+                    name: 'goodshow_win',
+                    url: 'widget://html/shop/goodshow_win.html',
+                    pageParam: {
+                        id: vo.id
+                        //id: 512
+                    }
+                });
+            },
+            
+            open_flower:function () {
+                vm.UILoading.flower({
+                    center: {
+                        x: api.frameWidth/2.0,
+                        y: api.frameHeight/2.0
+                    },
+                    size: 30,
+                    fixed: true
+                }, function(ret) {
+                    console.log(JSON.stringify(ret));
+                    vm.FlowerID = ret.id;
+                }); 
+            },
+            close_flower:function () {
+                vm.UILoading.closeFlower({
+                    id:vm.FlowerID
+                });
+            }
+
+
+        }
+    });
+    apiready = function () {
+        vm.UILoading = api.require('UILoading');
+
+        //vm.init();
+        api.setRefreshHeaderInfo({
+            visible: true,
+            loadingImg: 'widget://image/refresh.png',
+            bgColor: '#ccc',
+            textColor: '#fff',
+            textDown: '下拉刷新...',
+            textUp: '松开刷新...',
+            showTime: true
+        }, function (ret, err) {
+            vm.page = 1;
+            vm.init();
+            setTimeout("api.refreshHeaderLoadDone()", '500');
+        });
+
+        api.addEventListener({
+            name:'scrolltobottom',
+            extra:{
+                threshold:6000
+            }
+        }, function(ret, err){
+            vm.page += 1;
+            vm.init();
+        });
+
+        api.addEventListener({
+            name: 'search_active'
+        }, function (ret, err) {
+            console.log(JSON.stringify(ret));
+            vm.keywords = ret.value.keywords;
+            vm.page = 1;
+            vm.init();
+        });
+
+
+    };
+</script>

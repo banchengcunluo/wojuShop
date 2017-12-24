@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>交友</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/fontcss/iconfont.css" />
+</head>
+<body>
+<div class="aui-content aui-padded-t-10" id="app" v-cloak="">
+    <template v-for="(vo,index) in list">
+        <div class="aui-shadow aui-bg-white aui-margin-b-10 aui-padded-10" @click="open_jiaoyou_show_win(vo)">
+            <div class="aui-row aui-padded-b-10">
+                <div class="aui-col-xs-12 aui-font-size-14 aui-ellipsis-1">{{vo.title}}</div>
+                <div class="aui-col-xs-6">
+                    <p class="aui-font-size-12 aui-padded-t-5">
+                        年龄：
+                        <template v-if="vo.age_req == 0">不限</template>
+                        <template v-if="vo.age_req == 1">16岁以下</template>
+                        <template v-if="vo.age_req == 2">16-20岁</template>
+                        <template v-if="vo.age_req == 3">20-25岁</template>
+                        <template v-if="vo.age_req == 4">25-30岁</template>
+                        <template v-if="vo.age_req == 5">30-35岁</template>
+                        <template v-if="vo.age_req == 6">35-40岁</template>
+                        <template v-if="vo.age_req == 7">40-50岁</template>
+                        <template v-if="vo.age_req == 8">50-60岁</template>
+                        <template v-if="vo.age_req == 9">60岁以上</template>
+                        |
+                        身高：
+                        <template v-if="vo.height_req==0">不限</template>
+                        <template v-if="vo.height_req==1">150cm以下</template>
+                        <template v-if="vo.height_req==2">150-155cm</template>
+                        <template v-if="vo.height_req==3">155-160cm</template>
+                        <template v-if="vo.height_req==4">160-165cm</template>
+                        <template v-if="vo.height_req==5">165-170cm</template>
+                        <template v-if="vo.height_req==6">170-175cm</template>
+                        <template v-if="vo.height_req==7">175-180cm</template>
+                        <template v-if="vo.height_req==8">180-185cm</template>
+                        <template v-if="vo.height_req==9">185cm以上</template>
+                    </p>
+                    <p class="aui-font-size-12 aui-padded-t-5">{{vo.desc}}</p>
+                </div>
+                <div class="aui-col-xs-6 aui-text-right">
+                    <p class="aui-font-size-12 aui-padded-t-5">{{vo.create_time}}</p>
+                    <div class="aui-text-orange aui-padded-t-5 aui-font-size-14">
+                        电话：{{vo.telephone}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+</div>
+</body>
+</html>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/vue.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script>
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            cover_url:base_url,
+            token:'',
+            list: [],
+            status:0,
+            page:1,
+            pagesize:10
+        },
+        methods: {
+            init: function () {
+                api.ajax({
+                    url: friends_list_url,
+                    method: 'post',
+                    timeout: 30,
+                    dataType: 'json',
+                    returnAll: false,
+                    data: {
+                        values: {
+                            token: vm.token,
+                            status: vm.status,
+                            page:vm.page,
+                            pagesize:vm.pagesize
+                        }
+                    }
+                }, function (ret, err) {
+                    console.log(JSON.stringify(ret));
+                    if (ret) {
+                        if (vm.page == 1) {
+                            vm.list = ret.data.list;
+                        } else {
+                            if(ret.data.list.length == 0 ){
+                                api.toast({
+                                    msg: '加载完成',
+                                    duration: 2000,
+                                    location: 'bottom'
+                                });
+                                return false;
+                            }
+                            for (var i = 0; i < ret.data.list.length; i++) {
+                                vm.list.push(ret.data.list[i]);
+                            }
+                        }
+
+                    } else {
+                        console.log(JSON.stringify(err));
+                    }
+                });
+            },
+            open_jiaoyou_show_win:function (vo) {
+                api.openWin({
+                    name: 'jiaoyou_show_win',
+                    url: 'widget://html/bianmin/jiaoyou_show_win.html',
+                    pageParam: {
+                        id: vo.id
+                    }
+                });
+            },
+        }
+    });
+    apiready = function () {
+        vm.token = $api.getStorage('token');
+        vm.init();
+        api.setRefreshHeaderInfo({
+            visible: true,
+            loadingImg: 'widget://image/refresh.png',
+            bgColor: '#ccc',
+            textColor: '#fff',
+            textDown: '下拉刷新...',
+            textUp: '松开刷新...',
+            showTime: true
+        }, function (ret, err) {
+            vm.page = 1;
+            vm.init();
+            setTimeout("api.refreshHeaderLoadDone()", '500');
+        });
+
+        api.addEventListener({
+            name:'scrolltobottom',
+            extra:{
+                threshold:300
+            }
+        }, function(ret, err){
+            vm.page += 1;
+            vm.init();
+        });
+
+        api.addEventListener({
+            name: 'friends_list_init'
+        }, function (ret, err) {
+            vm.page = 1;
+            vm.init();
+        });
+    };
+</script>

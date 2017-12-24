@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,initial-scale=1.0,width=device-width"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>收货地址</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/fontcss/iconfont.css" />
+</head>
+<style>
+.aui-radio:checked, .aui-radio.aui-checked, .aui-checkbox:checked, .aui-checkbox.aui-checked {
+    background-color: #f39905;
+    border: solid 1px #f39905;
+    text-align: center;
+    background-clip: padding-box;
+}
+</style>
+<body>
+    <div class="aui-content aui-padded-b-15" id="app" v-cloak>
+        <transition-group name="list" tag="p">
+            <ul class="aui-list aui-media-list aui-margin-t-10 aui-bg-white aui-shadow woju-bgimg-no" v-for="(vo,index) in list" v-bind:key="index">
+                <li class="aui-list-item-middle aui-padded-10">
+                    <div class="aui-media-list-item-inner aui-row">
+                        <div class="aui-col-xs-1" >
+                            <label>
+                                <input class="aui-radio" type="checkbox" name="checkbox"
+                                       v-model="vo.is_default" @click="set_default_address(index)">
+                            </label>
+                        </div>
+                        <div class=" aui-col-xs-9 aui-padded-l-10 aui-border-r">
+                            <div class="aui-list-item-text">
+                                <div class="aui-list-item-title aui-font-size-14">{{vo.name}}  {{vo.mobile}}</div>
+                            </div>
+                            <div class="aui-list-item-text aui-font-size-12">{{vo.address_info}}</div>
+                        </div>
+                        <div class="aui-col-xs-1 aui-text-center" @click="address_edit(index)">
+                            <span class="aui-iconfont aui-icon-edit aui-font-size-16"></span>
+                        </div>
+                        <div class="aui-col-xs-1 aui-text-center" @click="delete_address(index)">
+                            <span class="aui-iconfont aui-icon-trash aui-font-size-16"></span>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </transition-group>
+    </div>
+</body>
+</html>
+<script src="../../script/api.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/common.js"></script>
+<script>
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            token: '',
+            list:[]
+        },
+        methods: {
+            init: function () {
+                api.ajax({
+                    url: list_address_url,
+                    method: 'post',
+                    timeout: 30,
+                    dataType: 'json',
+                    returnAll: false,
+                    data: {
+                        values: {
+                            token: vm.token,
+                        }
+                    }
+                }, function (ret, err) {
+                    if (ret) {
+                        console.log(JSON.stringify(ret));
+                        vm.list = ret.data;
+                    } else {
+                        console.log(JSON.stringify(err));
+                    }
+                });
+            },
+            address_edit:function (index) {
+                api.openWin({
+                    name: 'address_edit_win',
+                    url: 'widget://html/member/address_edit_win.html',
+                    pageParam: {
+                        info: vm.list[index]
+                    }
+                });
+            },
+            delete_address: function (index) {
+
+                var dialogBox = api.require('dialogBox');
+                dialogBox.alert({
+                    texts: {
+                        title: '地址管理',
+                        content: '是否删除？',
+                        leftBtnTitle: '取消',
+                        rightBtnTitle: '确认'
+                    },
+                    styles: {
+                        bg: '#fff',
+                        w: 300,
+                        title: {
+                            marginT: 20,
+                            icon: 'widget://res/gou.png',
+                            iconSize: 40,
+                            titleSize: 14,
+                            titleColor: '#000'
+                        },
+                        content: {
+                            color: '#000',
+                            size: 12
+                        },
+                        left: {
+                            marginB: 7,
+                            marginL: 20,
+                            w: 130,
+                            h: 35,
+                            corner: 2,
+                            color: '#FFFFFF',
+                            bg: '#CCCCCC',
+                            size: 12
+                        },
+                        right: {
+                            marginB: 7,
+                            marginL: 10,
+                            w: 130,
+                            h: 35,
+                            corner: 2,
+                            color: '#FFFFFF',
+                            bg: '#f39905',
+                            size: 12
+                        }
+                    },
+                    tapClose: true
+                }, function(ret) {
+                    if (ret.eventType == 'left') {
+                        console.log('left');
+                        dialogBox.close({
+                            dialogName: 'alert'
+                        });
+                    }
+                    if (ret.eventType == 'right') {
+                        dialogBox.close({
+                            dialogName: 'alert'
+                        });
+
+                        var id = vm.list[index].id;
+                        vm.list.splice(index, 1);
+                        api.ajax({
+                            url: delete_address_url,
+                            method: 'post',
+                            timeout: 30,
+                            dataType: 'json',
+                            returnAll: false,
+                            data: {
+                                values: {
+                                    token: vm.token,
+                                    id: id,
+                                }
+                            }
+                        }, function (res, err) {
+                            if (res) {
+                                console.log(JSON.stringify(res));
+                                api.toast({
+                                    msg: res.msg,
+                                    duration: 2000,
+                                    location: 'bottom'
+                                });
+                            } else {
+                                api.alert(JSON.stringify(err));
+                            }
+                        });
+                    }
+                });
+            },
+            set_default_address:function (index) {
+                var id = vm.list[index].id;
+                api.ajax({
+                    url: set_default_address_url,
+                    method: 'post',
+                    timeout: 30,
+                    dataType: 'json',
+                    returnAll: false,
+                    data: {
+                        values: {
+                            token: vm.token,
+                            id: id,
+                        }
+                    }
+                }, function (res, err) {
+                    if (res) {
+                        console.log(JSON.stringify(res));
+                        api.toast({
+                            msg: '设为默认地址成功',
+                            duration: 2000,
+                            location: 'bottom'
+                        });
+                        vm.init();
+                    } else {
+                        api.alert(JSON.stringify(err));
+                    }
+                });
+            }
+        }
+    });
+    apiready = function () {
+        vm.token = $api.getStorage('token');
+        vm.init();
+        api.addEventListener({
+            name: 'address_list_init'
+        }, function (ret, err) {
+            vm.init();
+        });
+        api.setRefreshHeaderInfo({
+            visible: true,
+            loadingImg: 'widget://image/refresh.png',
+            bgColor: '#ccc',
+            textColor: '#fff',
+            textDown: '下拉刷新...',
+            textUp: '松开刷新...',
+            showTime: true
+        }, function (ret, err) {
+            vm.init();
+            setTimeout("api.refreshHeaderLoadDone()", '500');
+        });
+    };
+</script>

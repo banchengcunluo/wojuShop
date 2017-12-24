@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>信息发布-全职招聘</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/fontcss/iconfont.css" />
+    <style>
+        .aui-list .aui-list-item-label{ width:25%;}
+        aui-input, input[type="text"], input[type="password"], input[type="search"], input[type="email"], input[type="tel"], input[type="url"], input[type="date"], input[type="datetime-local"], input[type="time"], input[type="number"], select, textarea{font-size: 0.7rem !important;}
+        .aui-list textarea{ height:auto;}
+        .aui-radio:checked, .aui-radio.aui-checked, .aui-checkbox:checked, .aui-checkbox.aui-checked{background-color:#f39b0a;border: solid 1px #f39b0a;}
+        .aui-radio, .aui-checkbox{margin-top: 0.2rem;width:0.8rem;height:0.8rem; }
+
+        .aui-list-item-label{font-size: 0.7rem !important;}
+        .aui-list-item-input{font-size: 0.7rem !important;}
+        select{font-size: 0.7rem !important;}
+
+        input[type="number"]{border-radius:4px;height: 1.3rem; margin:5px; text-align: center;}
+    </style>
+</head>
+<body>
+<div class="aui-content aui-margin-b-15" id="app" v-cloak="">
+    <div class="aui-padded-15">
+        <div class="aui-card-list-content">
+            <img :src="cover" class="aui-img-round" style="width:4rem;margin:auto;">
+        </div>
+    </div>
+    <ul class="aui-list aui-form-list aui-shadow aui-list-noborder aui-margin-t-10 aui-margin-b-10">
+        <li class="aui-list-header aui-bg-orange aui-font-size-14" style=" color:#fff;">基本信息</li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label"> 类别:</div>
+                <div class="aui-list-item-input">
+                    <select v-model="type" disabled>
+                        <option value="1">餐饮</option>
+                        <option value="2">家庭保洁</option>
+                        <option value="3">娱乐休闲</option>
+                        <option value="4">司机</option>
+                        <option value="5">客服</option>
+                        <option value="6">销售</option>
+                        <option value="7">房产中介</option>
+                    </select>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label"> 标题:</div>
+                <div class="aui-list-item-input">
+                    <input type="text" placeholder="标题" v-model="title" disabled>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label"> 招聘人数:</div>
+                <div class="aui-list-item-input" style=" line-height:36px;">
+                    <input type="number" placeholder="10" style=" width: 30%;float: left;border: 1px solid #eee;" v-model="numbers" disabled>人
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label"> 学历要求:</div>
+                <div class="aui-list-item-input">
+                    <select v-model="education" disabled>
+                        <option value="0">不限</option>
+                        <option value="1">高中</option>
+                        <option value="2">大专</option>
+                        <option value="3">本科</option>
+                        <option value="4">硕士</option>
+                        <option value="5">博士</option>
+                    </select>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label"> 经验要求:</div>
+                <div class="aui-list-item-input">
+                    <select v-model="work_time" disabled>
+                        <option value="0">不限</option>
+                        <option value="1">应届毕业生</option>
+                        <option value="2">1-2年</option>
+                        <option value="3">3-5年</option>
+                        <option value="4">6-7年</option>
+                        <option value="5">10年以上</option>
+                    </select>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label"> 薪水待遇:</div>
+                <div class="aui-list-item-input">
+                    <select v-model="salary" disabled>
+                        <option value="0">面议</option>
+                        <option value="1">0-1000</option>
+                        <option value="2">1000-2000</option>
+                        <option value="3">2000-3000</option>
+                        <option value="4">3000-5000</option>
+                        <option value="5">5000-8000</option>
+                        <option value="6">8000-12000</option>
+                        <option value="7">12000-20000</option>
+                        <option value="8">20000-25000</option>
+                        <option value="9">25000以上</option>
+                    </select>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">工作地点:</div>
+                <div class="aui-list-item-input">
+                    <input type="text" placeholder="" v-model="work_address" disabled>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="">
+                <div class=" aui-font-size-14 aui-padded-t-10">公司福利:</div>
+                <div class="aui-list-item-input aui-row aui-padded-10">
+                    <div class="aui-col-xs-4" >
+                        <label><input class="aui-checkbox" type="checkbox" value="1" v-model="benefits" disabled> 五险一金</label>
+                    </div>
+                    <div class="aui-col-xs-4" >
+                        <label><input class="aui-checkbox" type="checkbox" value="2" v-model="benefits" disabled> 包吃</label>
+                    </div>
+                    <div class="aui-col-xs-4" >
+                        <label><input class="aui-checkbox" type="checkbox" value="3" v-model="benefits" disabled> 包住</label>
+                    </div>
+                    <div class="aui-col-xs-4" >
+                        <label><input class="aui-checkbox" type="checkbox" value="4" v-model="benefits" disabled> 周末双休</label>
+                    </div>
+                    <div class="aui-col-xs-4" >
+                        <label><input class="aui-checkbox" type="checkbox" value="5" v-model="benefits" disabled> 年底双薪</label>
+                    </div>
+                    <div class="aui-col-xs-4" >
+                        <label><input class="aui-checkbox" type="checkbox" value="6" v-model="benefits" disabled> 房补</label>
+                    </div>
+                    <div class="aui-col-xs-4" >
+                        <label><input class="aui-checkbox" type="checkbox" value="7" v-model="benefits" disabled>话补</label>
+                    </div>
+                    <div class="aui-col-xs-4" >
+                        <label><input class="aui-checkbox" type="checkbox" value="8" v-model="benefits" disabled> 交通补助</label>
+                    </div>
+                    <div class="aui-col-xs-4" >
+                        <label><input class="aui-checkbox" type="checkbox" value="9" v-model="benefits" disabled> 饭补</label>
+                    </div>
+                    <div class="aui-col-xs-4" >
+                        <label><input class="aui-checkbox" type="checkbox" value="10" v-model="benefits" disabled> 加班补助</label>
+                    </div>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">详细描述:</div>
+                <div class="aui-list-item-input">
+                    <textarea placeholder="详细描述" v-model="desc" disabled></textarea>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">联系人:</div>
+                <div class="aui-list-item-input">
+                    <input type="text" placeholder="联系人" v-model="contacts" disabled>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">联系电话:</div>
+                <div class="aui-list-item-input">
+                    <input type="text" placeholder="联系电话" v-model="telephone" disabled>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">邮箱:</div>
+                <div class="aui-list-item-input">
+                    <input type="text" placeholder="" v-model="email" disabled>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">QQ号码:</div>
+                <div class="aui-list-item-input">
+                    <input type="number" placeholder="" v-model="qq" disabled>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">公司名称:</div>
+                <div class="aui-list-item-input">
+                    <input type="text" placeholder="" v-model="company_name" disabled>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">公司地址:</div>
+                <div class="aui-list-item-input">
+                    <input type="text" placeholder="" v-model="company_address" disabled>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">公司行业类别:</div>
+                <div class="aui-list-item-input">
+                    <select v-model="company_industry" disabled>
+                        <option value="1">娱乐休闲/餐饮/服务</option>
+                        <option value="2">生产/制造</option>
+                        <option value="3">网络/通信/电信</option>
+                        <option value="4">美容美发</option>
+                        <option value="5">医疗/保健/卫生/美容</option>
+                        <option value="6">媒体/影视/文化/艺术</option>
+                        <option value="7">超市/百货/批发/零售</option>
+                        <option value="8">家政</option>
+                        <option value="9">旅游</option>
+                        <option value="10">运动健身</option>
+                        <option value="11">教育/科研/培训</option>
+                        <option value="12">房地产开发/建筑</option>
+                        <option value="13">广告/会展/创意</option>
+                        <option value="14">贸易/交通/运输/物流</option>
+                        <option value="15">物业管理/商业中心</option>
+                        <option value="16">咨询/管理产业/法律/财会</option>
+                        <option value="17">检验/检测/认证</option>
+                        <option value="18">办公用品及设备</option>
+                        <option value="19">医药/生物工程</option>
+                        <option value="20">医疗设备/器械</option>
+                    </select>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">公司类型:</div>
+                <div class="aui-list-item-input">
+                    <select v-model="company_type" disabled>
+                        <option value="1">民营</option>
+                        <option value="2">外商独资</option>
+                        <option value="3">国企</option>
+                        <option value="4">合资</option>
+                        <option value="5">股份制企业</option>
+                        <option value="6">上市公司</option>
+                        <option value="7">国家机关</option>
+                        <option value="8">事业单位</option>
+                        <option value="9">其他</option>
+                    </select>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">公司规模:</div>
+                <div class="aui-list-item-input">
+                    <select v-model="company_size" disabled>
+                        <option value="1">0-49人</option>
+                        <option value="2">50-99人</option>
+                        <option value="3">100-500人</option>
+                        <option value="4">500人以上</option>
+                    </select>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">公司简介:</div>
+                <div class="aui-list-item-input">
+                    <textarea placeholder="10-200字之间" v-model="company_intro" disabled></textarea>
+                </div>
+            </div>
+        </li>
+    </ul>
+</div>
+</body>
+</html>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/vue.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script>
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            token: '',
+            base_url:base_url,
+            cover_url:'',
+            cover:'../../image/user_pic.png',
+            id:0,
+
+            type:1,//类型
+            title:1,//标题
+            numbers:10,//招聘人数
+            education:0,//学历要求
+            work_time:0,//经验要求
+            salary:0,//薪水待遇
+            work_address:'',//工作地点
+            benefits:[],//福利待遇
+            desc:'',//描述
+            contacts:'',//联系人
+            telephone:'',//手机
+            email:'',
+            qq:'',
+            company_name:'',
+            company_address:'',
+            company_industry:1,//行业类别
+            company_type:1,//公司类型
+            company_size:1,//公司规模
+            company_intro:1,//公司简介
+        },
+        methods: {
+            init: function () {
+                api.ajax({
+                    url: fulltime_job_detail_url,
+                    method: 'post',
+                    timeout: 30,
+                    dataType: 'json',
+                    returnAll: false,
+                    data: {
+                        values: {
+                            token: vm.token,
+                            id: vm.id,
+                        }
+                    }
+                }, function (ret, err) {
+                    if (ret) {
+                        vm.type = ret.data.type;
+                        vm.title = ret.data.title;
+                        vm.numbers = ret.data.numbers;
+                        vm.education = ret.data.education;
+                        vm.work_time = ret.data.work_time;
+                        vm.salary = ret.data.salary;
+                        vm.work_address = ret.data.work_address;
+                        vm.benefits = ret.data.benefits;
+                        vm.desc = ret.data.desc;
+                        vm.contacts = ret.data.contacts;
+                        vm.telephone = ret.data.telephone;
+                        vm.email = ret.data.email;
+                        vm.qq = ret.data.qq;
+                        vm.company_name = ret.data.company_name;
+                        vm.company_address = ret.data.company_address;
+                        vm.company_industry = ret.data.company_industry;
+                        vm.company_type = ret.data.company_type;
+                        vm.company_size = ret.data.company_size;
+                        vm.company_intro = ret.data.company_intro;
+                        if(ret.data.thumb){
+                            vm.cover = vm.base_url+ret.data.thumb;
+                        }
+                    } else {
+                        console.log(JSON.stringify(err));
+                    }
+                });
+            }
+        }
+    });
+
+    apiready = function () {
+        vm.token = $api.getStorage('token');
+        vm.id = api.pageParam.id;
+        vm.init();
+    };
+</script>

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>信息发布-求租房</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/fontcss/iconfont.css" />
+    <style>
+	.aui-list .aui-list-item-label{ width:25%;}
+	aui-input, input[type="text"], input[type="password"], input[type="search"], input[type="email"], input[type="tel"], input[type="url"], input[type="date"], input[type="datetime-local"], input[type="time"], input[type="number"], select, textarea{font-size: 0.7rem !important;}
+	.aui-list textarea{ height:auto;}
+	.aui-radio:checked, .aui-radio.aui-checked, .aui-checkbox:checked, .aui-checkbox.aui-checked{background-color:#f39b0a;border: solid 1px #f39b0a;}
+	.aui-radio, .aui-checkbox{margin-top: 0.2rem;width:0.8rem;height:0.8rem; }
+
+	.aui-list-item-label{font-size: 0.7rem !important;}
+	.aui-list-item-input{font-size: 0.7rem !important;}
+	select{font-size: 0.7rem !important;}
+
+    </style>
+</head>
+<body>
+<div class="aui-content aui-margin-b-15" id="app" v-cloak="">
+    <div class="aui-padded-15">
+        <div class="aui-card-list-content" @click="select_cover()">
+            <img :src="cover" class="aui-img-round" style="width:4rem;margin:auto;">
+        </div>
+    </div>
+    <ul class="aui-list aui-form-list aui-shadow aui-list-noborder aui-margin-t-10 aui-margin-b-10">
+        <li class="aui-list-header aui-bg-orange aui-font-size-14" style=" color:#fff;">基本信息</li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label"> 求租地段:</div>
+                <div class="aui-list-item-input">
+                    <input type="text" placeholder="求租地段" v-model="rent_address">
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label"> 租金:</div>
+                <div class="aui-list-item-input">
+                    <select v-model="rent_price">
+                        <option value="1">面议</option>
+                        <option value="2">300元/月以下</option>
+                        <option value="3">300-500元/月</option>
+                        <option value="4">500-800元/月</option>
+                        <option value="5">800-1000元/月</option>
+                        <option value="6">1000-2000元/月</option>
+                    </select>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">期望厅室:</div>
+                <div class="aui-list-item-input">
+                    <select v-model="req_room">
+                        <option value="1">整租一室</option>
+                        <option value="2">整租两室</option>
+                        <option value="3">整租三室</option>
+                        <option value="4">整租四室</option>
+                        <option value="5">整租四室以上</option>
+                        <option value="6">合租</option>
+                    </select>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">最晚入住:</div>
+                <div class="aui-list-item-input">
+                    <input type="date" placeholder="" v-model="enter_time">
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-header aui-bg-orange aui-font-size-14" style=" color:#fff;">详细信息</li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">标题:</div>
+                <div class="aui-list-item-input">
+                    <input type="text" placeholder="" v-model="title">
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">补充说明:</div>
+                <div class="aui-list-item-input">
+                    <textarea placeholder="10-200字之间" v-model="desc"></textarea>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">联系人:</div>
+                <div class="aui-list-item-input">
+                    <input type="text" placeholder="" v-model="contacts">
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">手机:</div>
+                <div class="aui-list-item-input">
+                    <input type="number" placeholder="" v-model="telephone">
+                </div>
+            </div>
+        </li>
+    </ul>
+</div>
+</body>
+</html>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/vue.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script>
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            token: '',
+            base_url:base_url,
+            cover_url:'',
+            cover:'../../image/user_pic.png',
+            thumb:'',
+
+            rent_address:'',//求租地段
+            rent_price:1,//租金
+            req_room:1,//期望厅室
+            enter_time:0,//最晚入住时间
+            title:'',//标题
+            desc:'',//补充说明
+            contacts:'',//联系人
+            telephone:'',//手机或电话
+        },
+        methods: {
+            init: function () {
+                api.ajax({
+                    url: req_rent_add_url,
+                    method: 'post',
+                    timeout: 30,
+                    dataType: 'json',
+                    returnAll: false,
+                    data: {
+                        values: {
+                            token: vm.token,
+                            rent_address: vm.rent_address,
+                            rent_price: vm.rent_price,
+                            req_room: vm.req_room,
+                            enter_time: vm.enter_time,
+                            title: vm.title,
+                            desc: vm.desc,
+                            contacts: vm.contacts,
+                            telephone: vm.telephone,
+                            thumb: vm.thumb
+                        }
+                    }
+                }, function (ret, err) {
+                    if (ret) {
+                        console.log(JSON.stringify(ret));
+                        api.toast({
+                            msg: ret.msg,
+                            duration: 2000,
+                            location: 'bottom'
+                        });
+                        if(ret.status == 1){
+                            api.sendEvent({
+                                name: 'req_rent_list_init',
+                            });
+                            setTimeout(function () {
+                                api.closeWin({
+                                    name: 'qiuzufang-posted_win'
+                                });
+                            },1000)
+                        }
+                    } else {
+                        console.log(JSON.stringify(err));
+                    }
+                });
+            },
+            select_cover:function () {
+                api.getPicture({
+                    sourceType: 'library',
+                    encodingType: 'jpg',
+                    mediaValue: 'pic',
+                    destinationType: 'url',
+                    allowEdit: true,
+                    quality: 50,
+                    targetWidth: 100,
+                    targetHeight: 100,
+                    saveToPhotoAlbum: false
+                }, function(ret, err) {
+                    if (ret) {
+                        console.log(JSON.stringify(ret));
+                        if(ret.data){
+                            vm.cover = ret.data;
+                            vm.file_upload();
+                        }
+                    } else {
+                        alert(JSON.stringify(err));
+                    }
+                });
+            },
+            file_upload:function () {
+                api.ajax({
+                    url: upload_url,
+                    method: 'post',
+                    timeout: 30,
+                    dataType: 'json',
+                    returnAll: false,
+                    data: {
+                        values: {
+                            token: vm.token
+                        },
+                        files: {
+                            file: vm.cover
+                        }
+                    }
+                }, function (ret, err) {
+                    if (ret) {
+                        console.log(JSON.stringify(ret));
+                        vm.cover_url = ret.path + '/' + ret.name;
+                        vm.thumb = ret.path + '/' + ret.name;
+                    } else {
+                        console.log(JSON.stringify(err));
+                    }
+                });
+            },
+        }
+    });
+
+    apiready = function () {
+        vm.token = $api.getStorage('token');
+        api.addEventListener({
+            name: 'req_rent_add_init'
+        }, function (ret, err) {
+            vm.init();
+        });
+    };
+</script>

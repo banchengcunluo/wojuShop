@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>搜索页面</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+</head>
+<style>
+.aui-searchbar{}
+.aui-bar-nav {background-color:#ebeced;color: #333;}
+.aui-bar-nav .aui-btn .aui-iconfont{ color:#333;}
+.aui-bar-nav a {color: #333;}
+</style>
+<body>
+    <header class="aui-bar aui-bar-nav" id="app" v-cloak="">
+        <a class="aui-pull-left aui-btn" onclick="closeWin()">
+            <span class="aui-iconfont aui-icon-left"></span>
+        </a>
+        <form  onsubmit="return submit_search();">
+            <div class="aui-title" style="left:2rem; right: 2rem;">
+                <div class="aui-searchbar" id="search">
+                    <div class="aui-searchbar-input aui-border-radius">
+                        <i class="aui-iconfont aui-icon-search"></i>
+                        <input type="search" placeholder="请输入搜索内容" id="search-input" v-model="keywords">
+                        <div class="aui-searchbar-clear-btn">
+                            <i class="aui-iconfont aui-icon-close"></i>
+                        </div>
+                    </div>
+                    <div class="aui-searchbar-btn" tapmode>取消</div>
+                </div>
+            </div>
+            <a class="aui-pull-right aui-btn aui-font-size-14" @click="search_init()">搜索</a>
+        </form>
+
+    </header>
+</body>
+</html>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/vue.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script>
+    function submit_search() {
+        vm.search_init();
+    }
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            keywords: '',
+        },
+        methods: {
+            search_init: function () {
+                api.sendEvent({
+                    name: 'search_active',
+                    extra: {
+                        keywords: vm.keywords
+                    }
+                });
+            }
+        }
+    });
+    apiready = function () {
+        $api.fixIos7Bar($api.dom("header"));//修复ios系统bar
+        api.openFrame({
+            name: 'search_frm',
+            url: 'widget://html/shop/search_frm.html',
+            rect: {
+                x: 0,
+                y: $api.dom('header').offsetHeight,
+                w: 'auto',
+                h: api.winHeight - $api.dom('header').offsetHeight
+            },
+            bounces: false,
+            pageParam: {
+                order_info: api.pageParam.order_info
+            }
+        });
+    };
+</script>

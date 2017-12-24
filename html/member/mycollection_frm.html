@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>我的收藏</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+</head>
+<body>
+<div class="aui-content" id="app" v-cloak>
+    <transition-group name="list" tag="p">
+    <ul class="aui-list aui-media-list aui-margin-t-10 aui-shadow aui-list-noborder" v-for="(vo,index) in list" v-bind:key="index">
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner" @click="open_goodshow_win(vo)">
+                <div class="aui-media-list-item-inner aui-border-b">
+                    <div class="aui-list-item-media">
+                        <img v-lazyload="cover_url + vo.thumb" src="../../image/lazyloading.png" class="aui-shadow aui-radius-4">
+                    </div>
+                    <div class="aui-list-item-inner">
+                        <div class="aui-list-item-text">
+                            <div class="aui-list-item-title aui-font-size-12 aui-ellipsis-2">
+                                {{vo.name}}
+                            </div>
+                        </div>
+                        <div class="aui-info aui-margin-t-5">
+                            <div class="aui-info-item aui-text-orange">
+                                ￥{{vo.market_price}}元
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="aui-text-right aui-padded-r-15 aui-padded-b-10">
+            	<div class="aui-btn aui-btn-outlined" @click="delete_goods_item(index)">取消收藏</div>
+            </div>
+        </li>
+    </ul>
+    </transition-group>
+</div>
+
+</body>
+</html>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/vue.js"></script>
+<script type="text/javascript" src="../../script/vue.lazyimg.min.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script>
+    Vue.use(Lazyload, {
+        time: 200,
+        fade: false,//显示站位图片
+        nohori: true
+    });
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            cover_url:base_url,
+            token:'',
+            list: []
+        },
+        methods: {
+            init: function () {
+                api.ajax({
+                    url: goods_collect_list_url,
+                    method: 'post',
+                    timeout: 30,
+                    dataType: 'json',
+                    returnAll: false,
+                    data: {
+                        values: {
+                            token: vm.token,
+                        }
+                    }
+                }, function (ret, err) {
+                    if (ret) {
+
+                        vm.list = ret.data;
+                    } else {
+                        console.log(JSON.stringify(err));
+                    }
+                });
+            },
+            open_goodshow_win:function (vo) {
+                api.openWin({
+                    name: 'goodshow_win',
+                    url: 'widget://html/shop/goodshow_win.html',
+                    pageParam: {
+                        id: vo.id
+                        //id: 512
+                    }
+                });
+            },
+            delete_goods_item:function (index) {
+                api.ajax({
+                    url: goods_uncollect_url,
+                    method: 'post',
+                    timeout: 30,
+                    dataType: 'json',
+                    returnAll: false,
+                    data: {
+                        values: {
+                            token: vm.token,
+                            goods_id: vm.list[index].id
+                        }
+                    }
+                }, function (ret, err) {
+                    if (ret) {
+
+                        api.toast({
+                            msg: ret.msg,
+                            duration: 2000,
+                            location: 'bottom'
+                        });
+                        if(ret.status == 1){
+                            vm.list.splice(index, 1);
+                        }
+                    } else {
+                        console.log(JSON.stringify(err));
+                    }
+                });
+            }
+        }
+    });
+    apiready = function () {
+        vm.token = $api.getStorage('token');
+        vm.init();
+
+        api.setRefreshHeaderInfo({
+            visible: true,
+            loadingImg: 'widget://image/refresh.png',
+            bgColor: '#ccc',
+            textColor: '#fff',
+            textDown: '下拉刷新...',
+            textUp: '松开刷新...',
+            showTime: true
+        }, function (ret, err) {
+            vm.init();
+            setTimeout("api.refreshHeaderLoadDone()", '500');
+        });
+    };
+</script>

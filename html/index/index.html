@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,initial-scale=1.0,width=device-width"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>首页</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/fontcss/iconfont.css" />
+</head>
+<style>
+    .aui-card-list-header{ font-size:0.6rem;padding-right:0;padding-left:0;}
+
+    .aui-card-list-header .iconfont{ font-size:14px;}
+    .imgbox{ padding:10px 0;}
+    .imgbox img{margin:auto; width: 55%;}
+    .imgbox p{ color:#333; margin-top:0.4rem;}
+
+    .aui-list{background-image:none;}
+    .aui-list .aui-list-item-inner{ padding-right:0;}
+    .aui-list .aui-list-item-title{ color:#fb4444;}
+
+    .sed-kill-title{padding:0.4rem 0;}
+    .timebox{ font-size:0.75rem;}
+    .timebox span{ background:#000; border-radius:4px; color:#fff;padding:4px; font-size:0.6rem;line-height:0.75rem;}
+
+    .more{ color:#f90000; font-size:0.8rem;}
+    .more span{border-radius:50%;padding:0.15rem; width:1rem; height:1rem;line-height:1rem;background:#f90000; color:#fff;text-align:center; font-weight:bold; font-size:0.6rem; display:inline;}
+
+    .pre-goods{padding:0.35rem}
+    .pre-goods .img{box-shadow: 0 1px 6px rgba(0,0,0,.2); padding:0.2rem; margin-bottom:0.2rem;}
+    .pre-goods .price{ font-size:0.8rem; color:#f90000;}
+    .pre-goods .price span{ display:block; text-decoration:line-through; font-size:0.6rem; color:#999;}
+
+    .ind-title{ text-align:center;  padding:0.5rem 1.5rem;position:relative;}
+    .ind-title .line{ height:1px; background:#666;}
+    .ind-title .h2{ display:block;background:#fff;position:relative; font-size:0.8rem;}
+    .ind-title .h3{display:block;background:#fff;  width:80%; margin:auto;margin-top:-1px;}
+
+    .pic{ position: relative;}
+    .pic:after{content: "";
+    position: absolute;
+    width: 0;
+    height: 0;
+    left:45%;
+    bottom:0;
+    border-bottom:0.8rem solid #fff;
+    border-left: 0.6rem solid rgba(0,0,0,0);
+    border-right:0.6rem solid rgba(0,0,0,0);}
+
+    .aui-list-view {position: relative;padding-left: 0;margin-top: 15px;margin-bottom: 15px;list-style: none;background-color: #fff; margin-left:-10px;}
+    .aui-list-view:after{ clear:both;}
+    .aui-list-view:last-child {margin-bottom: 15px;}
+    .aui-list-view.aui-grid-view .aui-list-view-cell {display: table-cell;padding:0px 0 0 10px;text-align: center;vertical-align: middle;background: none;}
+    .aui-list-view.aui-grid-view .aui-list-view-cell .aui-img{ border:1px solid #c9c9c9; border-radius:4px; position:relative;}
+    .aui-list-view.aui-grid-view .aui-list-view-cell .aui-img2{border:1px solid #c9c9c9; border-radius:4px;padding:0 0.2rem; margin-bottom:15px;}
+    .aui-list-view.aui-grid-view .aui-list-view-cell .aui-img .tip{ background:#ed0700; position:absolute; top:0; left:0; color:#fff;padding:0.15rem 0.5rem; }
+    .aui-list-view .aui-img-object { max-width: 60px;height: 60px;line-height: 60px;}
+    .aui-list-view.aui-grid-view .aui-list-view-cell .aui-img-object {width: 100%;max-width: 100%;height: auto;}
+
+    .aui-list-view .aui-img,.aui-list-view .aui-img2, .aui-list-view .aui-img-body {overflow: hidden;}
+    .aui-list-view.aui-grid-view .aui-list-view-cell .aui-img-body {padding: 5px 0;height: 2rem; line-height:0.9rem;}
+    .aui-list-view.aui-grid-view .aui-list-view-cell .price{ color:#f44444;}
+    .aui-list-view.aui-grid-view .aui-list-view-cell .iconfont{ font-size:22px; color:#666;}
+</style>
+<body>
+
+<div class="aui-content" id="app" v-cloak>
+	<div class="aui-list block" style="margin-top:0;">
+		<div class="aui-row aui-padded-t-10 aui-padded-b-10" onclick="open_window('member','notice_win')">
+	        <div class="aui-col-xs-1"><img src="../../image/ico-notice.png" style="width:70%;"></div>
+	        <div class="aui-col-xs-11 aui-font-size-14" >西安目前已有<em>5011</em>户家庭使用蜗居乐购购物平台...
+	        </div>
+	    </div>
+    </div>
+	<div class="aui-card-list block">
+    	<div class="aui-card-list-header aui-border-b">
+            <div><i class="iconfont icon-zuanshi1"></i>100%正品</div>
+            <div><i class="iconfont icon-shandianshandianfahuotuikuan"></i>极速配送</div>
+            <div><i class="iconfont icon-cuxiaotejialei"></i>天天特价</div>
+            <div><i class="iconfont icon-ccgl-tuihuoguanli-3"></i>假货包退</div>
+        </div>
+        <div class="aui-card-list-content " style="margin-right:-10px; margin-left:-10px;">
+            <div class="aui-row  aui-text-center">
+                <div class="aui-col-xs-3 aui-text-center imgbox" @click="set_shop()">
+                    <img src="../../image/i-img1.png">
+                    <p>乐购商城</p>
+                </div>
+                <div class="aui-col-xs-3 aui-text-center imgbox" onclick="open_window('shop','bulk_goodslist_win')">
+                    <img src="../../image/i-img2.png">
+                    <p>团购</p>
+                </div>
+                <div class="aui-col-xs-3 aui-text-center imgbox" onclick="open_window('member','integrated_mall_win')">
+                    <img src="../../image/i-img3.png">
+                    <p>积分商城</p>
+                </div>
+                <div class="aui-col-xs-3 aui-text-center imgbox" @click="set_bianmin()">
+                    <img src="../../image/i-img4.png">
+                    <p>便民中心</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="aui-list block">
+    	<div class="sed-kill-title">
+        	<div class="aui-row">
+                <div class="aui-col-xs-9 aui-text-danger">
+                    <div class="" style=" width:auto;"><span class="iconfont icon-shijian"></span><strong> 蜗居秒杀</strong></div>
+                </div>
+                <div class="aui-col-xs-3" style="margin-top:2px;" onclick="open_window('shop','seconds_kill_win')">
+                    <div class="aui-pull-right more"><strong>更多</strong> <span class="aui-iconfont aui-icon-left"></span></div>
+                </div>
+            </div>
+         </div>
+         <div class="aui-card-list-content">
+            <div class="aui-row" style="margin-left: -0.3rem;margin-right: -0.3rem;">
+                <template v-for="(vo,index) in seckill_goods_list">
+                    <div class="aui-col-xs-3 pre-goods aui-text-center" @click="open_seckill_goods_detail(index)">
+                        <img :src="cover_url + vo.thumb" class="img">
+                        <p class="price">￥{{vo.seckill_price}}<span>￥{{vo.market_price}}</span></p>
+                    </div>
+                </template>
+
+
+            </div>
+        </div>
+    </div>
+    <div class="aui-list block">
+        <div class="sed-kill-title">
+            <div class="aui-row">
+                <div class="aui-col-xs-9 aui-text-danger">
+                    <div class="" style=" width:auto;"><span class="iconfont icon-shijian"></span><strong> 蜗居团购</strong></div>
+                </div>
+                <div class="aui-col-xs-3" style="margin-top:2px;" onclick="open_window('shop','bulk_goodslist_win')">
+                    <div class="aui-pull-right more"><strong>更多</strong> <span class="aui-iconfont aui-icon-left"></span></div>
+                </div>
+            </div>
+        </div>
+        <div class="aui-card-list-content">
+            <div class="aui-row" style="margin-left: -0.3rem;margin-right: -0.3rem;">
+                <template v-for="(vo,index) in groupon_goods_list">
+                    <div class="aui-col-xs-3 pre-goods aui-text-center" @click="open_bulk_goodslist_detail_win(index)">
+                        <img :src="cover_url + vo.thumb" class="img">
+                        <p class="price">￥{{vo.groupon_price}}<span>￥{{vo.market_price}}</span></p>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </div>
+    <div class="aui-card-list block">
+        <div class="ind-title">
+        	<div class="h2" style=" background:#fff;">本地特产</div>
+            <div class="line"></div>
+            <p class="h3">买对不买贵，乐购推荐买实惠</p>
+        </div>
+        <div class="aui-card-list-content">
+            <img src="../../image/img5.png" @click="open_goodslist()">
+            <ul class="aui-list-view aui-grid-view">
+                <template v-for="(vo,index) in goods_rec_list">
+                    <li class="aui-list-view-cell aui-col-xs-6" @click="open_goodshow_win(vo)">
+                        <div class="aui-img2">
+                            <img class="aui-img-object" :src="cover_url + vo.thumb">
+                            <div class="aui-img-body aui-ellipsis-2 aui-text-left aui-font-size-12">
+                                {{vo.name}}
+                            </div>
+                            <div class="aui-row">
+                                <div class="aui-col-xs-6 price aui-padded-t-5 aui-text-left">￥{{vo.market_price}}</div>
+                                <div class="aui-col-xs-6 aui-text-right"><span class="iconfont icon-gouwuche"></span></div>
+                            </div>
+                        </div>
+                    </li>
+                </template>
+            </ul>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+<script src="../../script/api.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/common.js"></script>
+<script>
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            cover_url:base_url,
+            UIScrollPicture_height: 0,
+
+            seckill_goods_list:[],
+            groupon_goods_list:[],
+            goods_rec_list:[],
+            ad_list:[],
+            pictures:[],
+
+            info:{
+                "ad": "/upload/images/2017/09/20170922091544_24.jpg",
+                "create_time": "2017-08-25 10:41:14",
+                "icon": null,
+                "id": 655,
+                "level": 3,
+                "list": null,
+                "name": "本地特产",
+                "order_num": 1,
+                "parent_id": 160,
+                "status": 1,
+                "thumb": null,
+                "update_time": "2017-09-22 09:15:47"
+            }
+        },
+        methods: {
+            init: function () {
+                api.ajax({
+                    url: index_url,
+                    method: 'post',
+                    timeout: 30,
+                    dataType: 'json',
+                    returnAll: false,
+                    data: {
+                        values: {
+                            name: 'values'
+                        }
+                    }
+                }, function (ret, err) {
+                    if (ret) {
+                        vm.seckill_goods_list = ret.data.seckill_goods_list;
+                        vm.groupon_goods_list = ret.data.groupon_goods_list;
+                        vm.goods_rec_list = ret.data.goods_rec_list;
+                        vm.ad_list = ret.data.ad_list;
+                        for(var i=0;i<vm.ad_list.length;i++){
+                            vm.pictures.push(vm.cover_url+vm.ad_list[i].thumb)
+                        }
+                        vm.init_UIScrollPicture();
+                    } else {
+                        console.log(JSON.stringify(err));
+                    }
+                });
+            },
+            init_UIScrollPicture:function () {
+                var UIScrollPicture = api.require('UIScrollPicture');
+                UIScrollPicture.open({
+                    rect: {
+                        x: 0,
+                        y: 0,
+                        w: api.winWidth,
+                        h: vm.UIScrollPicture_height
+                    },
+                    data: {
+                        paths: vm.pictures
+                    },
+                    styles: {
+                        caption: {
+                            height: 35,
+                            color: '#E0FFFF',
+                            size: 13,
+                            bgColor: '#696969',
+                            position: 'bottom'
+                        },
+                        indicator: {
+                            align: 'center',
+                            color: '#FFFFFF',
+                            activeColor: '#f39905'
+                        }
+                    },
+                    placeholderImg: 'widget://res/slide1.jpg',
+                    contentMode: 'scaleToFill',
+                    interval: 3,
+                    fixedOn: api.frameName,
+                    loop: true,
+                    fixed: false
+                }, function(ret, err) {
+                    if (ret) {
+
+                        if(ret.eventType == 'click'){
+                            api.openWin({
+                                name: 'goodshow_win',
+                                url: 'widget://html/shop/goodshow_win.html',
+                                pageParam: {
+                                    id: vm.ad_list[ret.index].goods_id
+                                }
+                            });
+                        }
+                    } else {
+                        console(JSON.stringify(err));
+                    }
+                });
+            },
+            open_seckill_goods_detail:function (index) {
+                api.openWin({
+                    name: 'seconds_kill_detail_win',
+                    url: 'widget://html/shop/seconds_kill_detail_win.html',
+                    pageParam: {
+                        id: vm.seckill_goods_list[index].id
+                    }
+                });
+            },
+            open_bulk_goodslist_detail_win:function (index) {
+                api.openWin({
+                    name: 'bulk_goodslist_detail_win',
+                    url: 'widget://html/shop/bulk_goodslist_detail_win.html',
+                    pageParam: {
+                        id: vm.groupon_goods_list[index].id
+                    }
+                });
+            },
+            open_goodshow_win:function (vo) {
+                api.openWin({
+                    name: 'goodshow_win',
+                    url: 'widget://html/shop/goodshow_win.html',
+                    pageParam: {
+                        id: vo.id
+                        //id: 512
+                    }
+                });
+            },
+            set_bianmin:function () {
+                api.sendEvent({
+                    name: 'set_show_bianmin'
+                });
+            },
+            set_shop:function () {
+                api.sendEvent({
+                    name: 'set_show_shop'
+                });
+            },
+            open_goodslist:function () {
+                api.openWin({
+                    name: 'goodslist_win',
+                    url: 'widget://html/shop/goodslist_win.html',
+                    pageParam: {
+                        keywords: '',
+                        cate_id: vm.info.id,
+                        brand_id:'',
+                        is_new:0,
+                        is_rec:0,
+                        is_hot:0,
+                        info:vm.info
+                    }
+                });
+            },
+        }
+    });
+    apiready = function () {
+        vm.UIScrollPicture_height = api.winHeight/4;
+        $api.css($api.byId("app"),'margin-top:'+vm.UIScrollPicture_height+'px');
+        vm.init();
+        api.setRefreshHeaderInfo({
+            visible: true,
+            loadingImg: 'widget://image/refresh.png',
+            bgColor: '#ccc',
+            textColor: '#fff',
+            textDown: '下拉刷新...',
+            textUp: '松开刷新...',
+            showTime: true
+        }, function (ret, err) {
+            vm.init();
+            setTimeout("api.refreshHeaderLoadDone()", '500');
+        });
+    };
+</script>

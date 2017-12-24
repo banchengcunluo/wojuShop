@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>商品评价</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/common.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/fontcss/iconfont.css"/>
+
+    <style>
+        .iconfont {
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+<div class="aui-content" id="app">
+    <!--
+    <div class="aui-row aui-text-center aui-padded-5 aui-font-size-14 aui-border-b" style="background-color: #FFFFFF;">
+        <div class="aui-col-xs-3 aui-text-orange"><span class="aui-show">全部评价</span>0</div>
+        <div class="aui-col-xs-3"><span class="aui-show">好评</span>0</div>
+        <div class="aui-col-xs-3"><span class="aui-show">中评</span>0</div>
+        <div class="aui-col-xs-3"><span class="aui-show">差评</span>0</div>
+    </div>
+    -->
+
+    <ul class="aui-list aui-media-list aui-shadow aui-margin-t-10" style=" background-image:none;">
+        <template v-for="(vo,index) in list">
+            <li class="aui-list-item aui-padded-t-15">
+                <div class="aui-row">
+                    <div class="aui-col-xs-2">
+                        <div style="width:2rem;">
+                            <img :src="base_url+vo.cover" class="aui-img-round">
+                        </div>
+                    </div>
+                    <div class="aui-col-xs-5 aui-font-size-12">
+                        {{vo.username}}
+                        <p><i class="iconfont icon-pingfen01" style="color:#ed9300"></i></p>
+                    </div>
+                    <!--
+                    <div class="aui-col-xs-5 aui-font-size-12 aui-text-gray aui-padded-t-10 aui-padded-r-10 aui-text-right ">
+                        2017-07-27 17:55
+                    </div>
+                    -->
+                </div>
+                <div class="aui-media-list-item-inner">
+                    <div class="aui-list-item-inner">
+                        <div class="aui-list-item-text aui-text-black aui-font-size-14">
+                            {{vo.content}}
+                        </div>
+                        <div class="aui-row aui-text-gray aui-padded-t-10">
+                            <div class="aui-col-xs-12 aui-font-size-14">{{vo.short_headlines}}</div>
+                            <!--
+                            <div class="aui-col-xs-12 aui-font-size-14">购买日期：2017-07-21</div>
+                            -->
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </template>
+
+    </ul>
+
+    <div class="aui-padded-10">
+        <div class="aui-btn aui-btn-block aui-btn-outlined aui-btn-sm" @click="change_tab()">返回</div>
+    </div>
+</div>
+</body>
+</html>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/vue.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script>
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            base_url:base_url,
+            goods_id: '',
+            list: []
+        },
+        methods: {
+            init: function () {
+                api.ajax({
+                    url: goods_evaluate_list_url,
+                    method: 'post',
+                    timeout: 30,
+                    dataType: 'json',
+                    returnAll: false,
+                    data: {
+                        values: {
+                            goods_id: vm.goods_id
+                        }
+                    }
+                }, function (ret, err) {
+                    if (ret) {
+                        vm.list = ret.data;
+                        console.log(JSON.stringify(ret));
+                    } else {
+                        console.log(JSON.stringify(err));
+                    }
+                });
+            },
+            change_tab: function () {
+                api.setFrameGroupIndex({
+                    name: 'goods_showfrm',
+                    index: 0,
+                    scroll: false
+                });
+            }
+        }
+    });
+    apiready = function () {
+        vm.goods_id = api.pageParam.id;
+        vm.init();
+    };
+</script>

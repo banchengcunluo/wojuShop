@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>我的优惠券</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <style>
+    .aui-tab-item.aui-active {
+    color: #f39905;
+    border-bottom: 2px solid #f39905;}
+    </style>
+</head>
+<body>
+<header class="aui-bar aui-bar-nav aui-bar-light" id="aui-header">
+    <a class="aui-btn aui-pull-left" onclick="closeWin()">
+        <span class="aui-iconfont aui-icon-left aui-text-black"></span>
+    </a>
+    <div class="aui-title aui-font-size-14">我的优惠券</div>
+</header>
+<div class="aui-tab aui-padded-l-15 aui-padded-r-15" id="tab">
+    <div class="aui-tab-item" v-bind:class="{'aui-active':index==0}" @click="changetab(0)">未使用</div>
+    <div class="aui-tab-item" v-bind:class="{'aui-active':index==1}" @click="changetab(1)">已使用</div>
+    <div class="aui-tab-item" v-bind:class="{'aui-active':index==2}" @click="changetab(2)">已失效</div>
+</div>
+
+</body>
+</html>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/vue.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script>
+    var vm = new Vue({
+        el: '#tab',
+        data: {
+            index: 0,
+            list: [
+            ]
+        },
+        methods: {
+            init: function () {
+
+            },
+            changetab:function (index) {
+                vm.index = index;
+                api.setFrameGroupIndex({
+                    name: 'mycoupon_frm_frame',
+                    index: vm.index,
+                    scroll: false
+                });
+            }
+        }
+    });
+    apiready = function () {
+        vm.index = api.pageParam.index;
+        $api.fixIos7Bar($api.dom("header"));//修复ios系统bar
+        api.openFrameGroup({
+            name: 'mycoupon_frm_frame',
+            background: 'bgcolor',
+            scrollEnabled: true,
+            rect: {
+                x: 0,
+                y: $api.dom('header').offsetHeight + $api.byId('tab').offsetHeight,
+                w: 'auto',
+                h: api.winHeight - $api.dom('header').offsetHeight - $api.byId('tab').offsetHeight
+            },
+            index: vm.index,
+            frames: [
+                {
+                    name: 'mycoupon1_frm',
+                    url: 'widget://html/member/mycoupon1_frm.html',
+                    bgColor: 'bgcolor',
+                    bounces: true
+                },
+                {
+                    name: 'mycoupon2_frm',
+                    url: 'widget://html/member/mycoupon2_frm.html',
+                    bgColor: 'bgcolor',
+                    bounces: true
+                },
+                {
+                    name: 'mycoupon3_frm',
+                    url: 'widget://html/member/mycoupon3_frm.html',
+                    bgColor: 'bgcolor',
+                    bounces: true
+                }
+            ]
+        }, function (ret, err) {
+
+            vm.index = ret.index;
+        });
+    };
+</script>

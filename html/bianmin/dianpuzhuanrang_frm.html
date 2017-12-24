@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>店铺转让</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/fontcss/iconfont.css" />
+</head>
+<body>
+<div class="aui-content aui-padded-t-10" id="app" v-cloak="">
+    <template v-for="(vo,index) in list">
+        <div class="aui-shadow aui-bg-white aui-margin-b-10 aui-padded-10" @click="open_dianpuzhuanrang_show_win(vo)">
+            <div class="aui-row aui-padded-b-10">
+                <div class="aui-col-xs-12 aui-font-size-14 aui-ellipsis-1">{{vo.title}}</div>
+                <div class="aui-col-xs-6">
+                    <p class="aui-font-size-12 aui-text-orange aui-padded-t-5">
+                        <template v-if="vo.shop_type == 1">购物中心</template>
+                        <template v-if="vo.shop_type == 2">临街店铺</template>
+                        <template v-if="vo.shop_type == 3">摊位/柜台</template>
+                        <template v-if="vo.shop_type == 4">写字楼底商</template>
+                        <template v-if="vo.shop_type == 5">住宅底商</template>
+                        <template v-if="vo.shop_type == 6">其他</template>
+
+                        <template v-if="vo.status == 1">新铺</template>
+                        <template v-if="vo.status == 2">空铺</template>
+                        <template v-if="vo.status == 3">营业中</template>
+
+                        <template v-if="vo.decoration == 1">毛坯</template>
+                        <template v-if="vo.decoration == 2">简单装修</template>
+                        <template v-if="vo.decoration == 3">中等装修</template>
+                        <template v-if="vo.decoration == 4">精装修</template>
+                        <template v-if="vo.decoration == 5">豪华装修</template>
+
+                        {{vo.area}}m²</p>
+                    <p class="aui-font-size-12 aui-padded-t-5 aui-ellipsis-1">
+                        <template v-if="vo.type == 1">个人</template>
+                        <template v-if="vo.type == 2">中介</template>
+                    </p>
+                </div>
+                <div class="aui-col-xs-6 aui-text-right">
+                    <p class="aui-font-size-12 aui-padded-t-5">{{vo.create_time}}</p>
+                    <div class="aui-padded-t-5 aui-font-size-12">{{vo.trans_price}}万元转让费</div>
+                </div>
+            </div>
+
+        </div>
+    </template>
+</div>
+</body>
+</html>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/vue.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script>
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            cover_url:base_url,
+            token:'',
+            list: [],
+            status:0,
+            page:1,
+            pagesize:10
+        },
+        methods: {
+            init: function () {
+                api.ajax({
+                    url: shop_list_url,
+                    method: 'post',
+                    timeout: 30,
+                    dataType: 'json',
+                    returnAll: false,
+                    data: {
+                        values: {
+                            token: vm.token,
+                            status: vm.status,
+                            page:vm.page,
+                            pagesize:vm.pagesize
+                        }
+                    }
+                }, function (ret, err) {
+                    if (ret) {
+                        if (vm.page == 1) {
+                            vm.list = ret.data.list;
+                        } else {
+                            if(ret.data.list.length == 0 ){
+                                api.toast({
+                                    msg: '加载完成',
+                                    duration: 2000,
+                                    location: 'bottom'
+                                });
+                                return false;
+                            }
+                            for (var i = 0; i < ret.data.list.length; i++) {
+                                vm.list.push(ret.data.list[i]);
+                            }
+                        }
+
+                    } else {
+                        console.log(JSON.stringify(err));
+                    }
+                });
+            },
+            open_dianpuzhuanrang_show_win:function (vo) {
+                api.openWin({
+                    name: 'dianpuzhuanrang_show_win',
+                    url: 'widget://html/bianmin/dianpuzhuanrang_show_win.html',
+                    pageParam: {
+                        id: vo.id
+                    }
+                });
+            },
+        }
+    });
+    apiready = function () {
+        vm.token = $api.getStorage('token');
+        vm.init();
+        api.setRefreshHeaderInfo({
+            visible: true,
+            loadingImg: 'widget://image/refresh.png',
+            bgColor: '#ccc',
+            textColor: '#fff',
+            textDown: '下拉刷新...',
+            textUp: '松开刷新...',
+            showTime: true
+        }, function (ret, err) {
+            vm.page = 1;
+            vm.init();
+            setTimeout("api.refreshHeaderLoadDone()", '500');
+        });
+
+        api.addEventListener({
+            name:'scrolltobottom',
+            extra:{
+                threshold:300
+            }
+        }, function(ret, err){
+            vm.page += 1;
+            vm.init();
+        });
+        api.addEventListener({
+            name:'shop_list_init',
+        }, function(ret, err){
+            vm.page = 1;
+            vm.init();
+        });
+    };
+</script>

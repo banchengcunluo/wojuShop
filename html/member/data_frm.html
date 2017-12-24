@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,initial-scale=1.0,width=device-width"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>设置</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/fontcss/iconfont.css" />
+    <style type="text/css">
+	.aui-list{ background-image:none;}
+	.aui-list.aui-list-in .aui-list-item {background-position: 0rem bottom;}
+	.aui-list-item-arrow:before {border: 1px solid #8f8f8f;border-top: none;border-right: none;}
+    </style>
+</head>
+<body>
+<section class="aui-content" id="app" v-cloak>
+    <ul class="aui-list aui-list-in aui-shadow aui-margin-t-10">
+        <li class="aui-list-item aui-list-item-arrow">
+            <div class="aui-list-item-inner" onclick="open_window('member','about_win')">
+                <div class="aui-list-item-title aui-font-size-14">关于我们</div>
+                <div class="aui-list-item-right aui-font-size-14"></div>
+            </div>
+        </li>
+        <li class="aui-list-item aui-list-item-arrow">
+            <div class="aui-list-item-inner" onclick="open_window('member','help_win')">
+                <div class="aui-list-item-title aui-font-size-14">帮助中心</div>
+                <div class="aui-list-item-right aui-font-size-14"></div>
+            </div>
+        </li>
+        <li class="aui-list-item  aui-list-item-arrow">
+            <div class="aui-list-item-inner" @click="clearcache()">
+                <div class="aui-list-item-title aui-font-size-14">清除缓存</div>
+                <div class="aui-list-item-right aui-font-size-14"> {{size}}MB</div>
+            </div>
+        </li>
+        <li class="aui-list-item aui-list-item-arrow">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-title aui-font-size-14">感谢</div>
+                <div class="aui-list-item-right aui-font-size-14"></div>
+            </div>
+        </li>
+    </ul>
+</section>
+</body>
+</html>
+<script src="../../script/api.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/common.js"></script>
+<script>
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            size: 0.00,
+        },
+        methods: {
+            login_out: function () {
+                vm.token = null;
+                $api.setStorage('token',null);
+                $api.setStorage('member_info',null);
+                api.toast({
+                    msg: '退出成功',
+                    duration: 2000,
+                    location: 'bottom'
+                });
+                api.sendEvent({
+                    name: 'usercenter_init',
+                });
+                api.sendEvent({
+                    name: 'cart_list_init',
+                });
+                setTimeout(function () {
+                    api.closeWin({
+                        name: 'usenter_win'
+                    });
+                },500)
+            },
+            clearcache:function () {
+                api.clearCache(function() {
+                    vm.size = 0.00;
+                    api.toast({
+                        msg: '清除完成'
+                    });
+                });
+            }
+        }
+    });
+    apiready = function () {
+        api.getCacheSize(function(ret) {
+            var size = (ret.size/1024)/1024;
+            vm.size = size.toFixed(2);
+        });
+    };
+</script>

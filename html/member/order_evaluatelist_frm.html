@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>订单</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/common.css"/>
+    <style>
+        .aui-radio {
+            width: 1rem;
+            height: 1rem;
+        }
+
+        .aui-radio:checked, .aui-radio.aui-checked, .aui-checkbox:checked, .aui-checkbox.aui-checked {
+            background-color: #f39905;
+            border: solid 1px #f39905;
+        }
+    </style>
+</head>
+<body>
+<div class="aui-content" id="app" v-cloak>
+    <ul class="aui-list aui-media-list aui-margin-t-10 aui-shadow aui-list-noborder">
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <template v-for="(vo2,index2) in order_info.order_goods">
+                    <div class="aui-media-list-item-inner aui-border-b">
+                        <div class="aui-list-item-media" @click="open_goodshow_win(vo2)">
+                            <img :src="cover_url+vo2.goods.thumb" class="aui-shadow aui-radius-4">
+                        </div>
+                        <div class="aui-list-item-inner aui-padded-r-0">
+                            <div class="aui-list-item-text">
+                                <div class="aui-list-item-title aui-font-size-12 aui-ellipsis-2">
+                                    {{vo2.goods_name}}
+                                </div>
+                            </div>
+                            <template v-if="vo2.goods_spec">
+                                <div class="aui-list-item-text aui-font-size-12 aui-padded-t-5">
+                                    {{vo2.goods_spec.name}}
+                                </div>
+                            </template>
+                            <div class="aui-info aui-margin-t-5" style="padding:0">
+                                <div class="aui-info-item aui-text-orange">
+                                    ￥{{vo2.goods_price}}元
+                                </div>
+                                <div class="aui-info-item">x{{vo2.goods_num}}</div>
+                                <div class="aui-info-item" @click="open_order_evaluateform_win(vo2)">
+                                    <div class="aui-btn aui-btn-danger aui-btn-block aui-btn-outlined aui-btn-sm" style="height: 1.4rem;line-height: 1.4rem;">立即评价</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </li>
+    </ul>
+</div>
+</body>
+</html>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/vue.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script>
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            token:'',
+            id: '',
+            cover_url:base_url,
+            order_info: {},
+        },
+        methods: {
+            open_goodshow_win:function (vo) {
+                console.log(JSON.stringify(vo));
+                api.openWin({
+                    name: 'goodshow_win',
+                    url: 'widget://html/shop/goodshow_win.html',
+                    pageParam: {
+                        id: vo.goods_id
+                    }
+                });
+            },
+            open_order_evaluateform_win:function (vo) {
+                api.openWin({
+                    name: 'order_evaluateform_win',
+                    url: 'widget://html/member/order_evaluateform_win.html',
+                    pageParam: {
+                        vo: vo
+                    }
+                });
+            }
+        }
+    });
+    apiready = function () {
+        vm.token = $api.getStorage('token');
+        vm.order_info = api.pageParam.vo;
+        console.log(JSON.stringify(vm.order_info));
+    };
+</script>

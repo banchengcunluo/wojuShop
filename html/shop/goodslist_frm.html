@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>商品列表</title>
+    <link rel="stylesheet" type="text/css" href="../../css/fontcss/iconfont.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+</head>
+<style>
+.aui-list-item-title{height:46px;}
+</style>
+<body>
+<div class="aui-content" id="app" v-cloak>
+    <div class="aui-row aui-text-center aui-padded-10 aui-font-size-14 aui-border-b" style="background-color: #FFFFFF;">
+        <div class="aui-col-xs-3" v-bind:class="{'aui-text-orange': is_all==1}" @click="list_tab0()">全部</div>
+        <div class="aui-col-xs-3" v-bind:class="{'aui-text-orange': is_new==1}" @click="list_tab1()">新品</div>
+        <div class="aui-col-xs-3" v-bind:class="{'aui-text-orange': is_rec==1}" @click="list_tab2()">推荐</div>
+        <div class="aui-col-xs-3" v-bind:class="{'aui-text-orange': is_hot==1}" @click="list_tab3()">热销</div>
+    </div>
+    <ul class="aui-list aui-media-list aui-padded-5" style="background:transparent;">
+        <li class="">
+            <div class="aui-row aui-row-padded">
+                <div class="aui-col-xs-6  aui-padded-5"
+                     v-for="(vo,index) in list"
+                     @click="open_goodshow_win(vo)">
+                    <div class="aui-bg-list aui-padded-5">
+                        <img :src="cover_url + vo.thumb">
+                        <div class="aui-list-item-title aui-font-size-14 aui-ellipsis-2 aui-padded-t-5">
+                            {{vo.name}}
+                        </div>
+                        <div class="aui-row">
+                            <div class="aui-col-xs-6 aui-text-danger aui-padded-5 aui-font-size-14">￥{{vo.market_price}}</div>
+                            <div class="aui-col-xs-6 aui-text-right"><span class="iconfont icon-gouwuche aui-font-size-20 aui-text-gray"></span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </li>
+    </ul>
+</div>
+</body>
+</html>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/vue.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script>
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            cover_url:base_url,
+            keywords: "",
+            is_all: 1,
+            cate_id:'',
+            brand_id:'',
+            is_new:'',
+            is_rec:'',
+            is_hot:'',
+            info:[],
+            list: [],
+            page:1,
+            pagesize:100,
+            UILoading:'',
+            FlowerID:''
+        },
+        methods: {
+            init: function () {
+                vm.open_flower();
+                var pageparme = {
+                        keywords: vm.keywords,
+                        cate_id: vm.cate_id,
+                        brand_id:vm.brand_id,
+                        is_new:vm.is_new,
+                        is_rec:vm.is_rec,
+                        is_hot:vm.is_hot,
+                        page:vm.page,
+                        pagesize:vm.pagesize
+                };
+                console.log(JSON.stringify(pageparme));
+                api.ajax({
+                    url: goods_list_url,
+                    method: 'post',
+                    timeout: 30,
+                    dataType: 'json',
+                    returnAll: false,
+                    data: {
+                        values: {
+                            keywords: vm.keywords,
+                            cate_id: vm.cate_id,
+                            brand_id:vm.brand_id,
+                            is_new:vm.is_new,
+                            is_rec:vm.is_rec,
+                            is_hot:vm.is_hot,
+                            page:vm.page,
+                            pagesize:vm.pagesize,
+                        }
+                    }
+                }, function (ret, err) {
+                    vm.close_flower();
+                    console.log(JSON.stringify(ret));
+                    if (ret) {
+                        if (vm.page == 1) {
+                            vm.list = ret.data.list;
+                        } else {
+                            if(ret.data.list.length == 0 ){
+                                api.toast({
+                                    msg: '加载完成',
+                                    duration: 2000,
+                                    location: 'bottom'
+                                });
+                                return false;
+                            }
+                            for (var i = 0; i < ret.data.list.length; i++) {
+                                vm.list.push(ret.data.list[i]);
+                            }
+                        }
+
+                    } else {
+                        console.log(JSON.stringify(err));
+                    }
+                });
+            },
+            list_tab0:function () {
+                vm.is_all = 1;
+                vm.is_hot = '';
+                vm.is_rec = '';
+                vm.is_new = '';
+                vm.page = 1;
+                vm.init();
+            },
+            list_tab1:function () {
+                vm.is_all = '';
+                vm.is_hot = '';
+                vm.is_rec = '';
+                vm.is_new = 1;
+                vm.page = 1;
+                vm.init();
+            },
+            list_tab2:function () {
+                vm.is_all = '';
+                vm.is_hot = '';
+                vm.is_rec = 1;
+                vm.is_new = '';
+                vm.page = 1;
+                vm.init();
+            },
+            list_tab3:function () {
+                vm.is_all = '';
+                vm.is_hot = 1;
+                vm.is_rec = '';
+                vm.is_new = '';
+                vm.page = 1;
+                vm.init();
+            },
+            open_goodshow_win:function (vo) {
+
+
+
+                api.openWin({
+                    name: 'goodshow_win',
+                    url: 'widget://html/shop/goodshow_win.html',
+                    pageParam: {
+                        id: vo.id
+                        //id: 512
+                    }
+                });
+            },
+            open_flower:function () {
+                vm.UILoading.flower({
+                    center: {
+                        x: api.frameWidth/2.0,
+                        y: api.frameHeight/2.0
+                    },
+                    size: 30,
+                    fixed: true
+                }, function(ret) {
+                    console.log(JSON.stringify(ret));
+                    vm.FlowerID = ret.id;
+                });
+            },
+            close_flower:function () {
+                vm.UILoading.closeFlower({
+                    id:vm.FlowerID
+                });
+            }
+        }
+    });
+    apiready = function () {
+        vm.UILoading = api.require('UILoading');
+        vm.cate_id = api.pageParam.cate_id;
+        vm.brand_id = api.pageParam.brand_id?api.pageParam.brand_id:'';
+        vm.info = api.pageParam.info;
+        vm.init();
+        api.setRefreshHeaderInfo({
+            visible: true,
+            loadingImg: 'widget://image/refresh.png',
+            bgColor: '#ccc',
+            textColor: '#fff',
+            textDown: '下拉刷新...',
+            textUp: '松开刷新...',
+            showTime: true
+        }, function (ret, err) {
+            vm.page = 1;
+            vm.init();
+            setTimeout("api.refreshHeaderLoadDone()", '500');
+        });
+
+        api.addEventListener({
+            name:'scrolltobottom',
+            extra:{
+                threshold:6000
+            }
+        }, function(ret, err){
+            vm.page += 1;
+            vm.init();
+        });
+    };
+</script>

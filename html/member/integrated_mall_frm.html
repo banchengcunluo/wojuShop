@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>积分商城</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <style>
+
+    </style>
+</head>
+<body>
+<div class="aui-content" id="app" v-cloak="">
+    <div class="aui-padded-5" style="background:transparent;">
+        <div class="aui-row aui-row-padded">
+            <transition-group name="list" tag="p">
+            <div class="aui-col-xs-6  aui-padded-5" v-for="(vo,index) in list"
+                 v-bind:key="index" @click="open_integrated_mall_detail_win(index)">
+                <div class="aui-bg-list aui-padded-5">
+                    <img v-lazyload="cover_url + vo.thumb"
+                         src="../../image/lazyloading.png" class="aui-radius-4 aui-shadow">
+                    <div class="aui-font-size-14 aui-ellipsis-2 aui-padded-t-5">
+                        {{vo.name}}
+                    </div>
+                    <div class="aui-row aui-padded-t-5 ">
+                        <div class="aui-col-xs-6 aui-font-size-12">
+                            <span class="aui-font-size-14 aui-text-danger">{{vo.exchange_score}} </span>积分
+                        </div>
+                        <div class="aui-col-xs-6 aui-text-right aui-font-size-12 aui-padded-t-5 aui-ellipsis-1">{{vo.order_num}}人已兑换</div>
+                    </div>
+                </div>
+            </div>
+            </transition-group>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/vue.js"></script>
+<script type="text/javascript" src="../../script/vue.lazyimg.min.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script>
+    Vue.use(Lazyload, {
+        time: 200,
+        fade: false,//显示站位图片
+        nohori: true
+    });
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            cover_url:base_url,
+            list: [
+            ]
+        },
+        methods: {
+            init: function (index) {
+                api.ajax({
+                    url: score_goods_list_url,
+                    method: 'post',
+                    timeout: 30,
+                    dataType: 'json',
+                    returnAll: false,
+                    data: {
+                        values: {
+                            hits: 0
+                        }
+                    }
+                }, function (ret, err) {
+                    if (ret) {
+
+                        if(ret.status == 1){
+                            vm.list = ret.data;
+                        }
+
+                    } else {
+                        console.log(JSON.stringify(err));
+                    }
+                });
+            },
+            open_integrated_mall_detail_win:function (index) {
+                api.openWin({
+                    name: 'integrated_mall_detail_win',
+                    url: 'widget://html/member/integrated_mall_detail_win.html',
+                    pageParam: {
+                        id: vm.list[index].id
+                    }
+                });
+            }
+        }
+    });
+    apiready = function () {
+        vm.init();
+        api.setRefreshHeaderInfo({
+            visible: true,
+            loadingImg: 'widget://image/refresh.png',
+            bgColor: '#ccc',
+            textColor: '#fff',
+            textDown: '下拉刷新...',
+            textUp: '松开刷新...',
+            showTime: true
+        }, function (ret, err) {
+            vm.init();
+            setTimeout("api.refreshHeaderLoadDone()", '500');
+        });
+    };
+</script>

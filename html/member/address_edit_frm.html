@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,initial-scale=1.0,width=device-width"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>编辑地址</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/common.css"/>
+</head>
+<style>
+    .aui-list-item-arrow:before {
+        border: 1px solid #333;
+        border-top: none;
+        border-right: none;
+    }
+
+    .aui-list {
+        background-image: none;
+    }
+
+    .aui-list.aui-list-in .aui-list-item {
+        background-position: 0rem bottom;
+    }
+
+    .aui-list-item-arrow:before {
+        border: 1px solid #8f8f8f;
+        border-top: none;
+        border-right: none;
+    }
+
+    .aui-radio {
+        width: 0.9rem;
+        height: 0.9rem;
+    }
+
+    .aui-radio:checked, .aui-radio.aui-checked {
+        background-color: #ffc800;
+        border: none;
+    }
+</style>
+<body>
+<div id="app" v-cloak>
+    <div class="aui-content aui-margin-t-10 aui-shadow">
+        <ul class="aui-list aui-form-list">
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label aui-font-size-14"> 收货人</div>
+                    <div class="aui-list-item-input">
+                        <input type="text" placeholder="填写名字" class="aui-font-size-14" v-model="name">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label aui-font-size-14">联系电话</div>
+                    <div class="aui-list-item-input">
+                        <input type="number" placeholder="填写手机号码 " class="aui-font-size-14" v-model="mobile">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-input">
+                        <label><input class="aui-radio aui-margin-r-5 aui-margin-t-5"
+                                      type="radio" value="0" v-model="address_extra">扶风县新区</label>&nbsp;&nbsp;&nbsp;&nbsp;
+                        <label><input class="aui-radio aui-margin-r-5 aui-margin-t-5"
+                                      type="radio" value="1" v-model="address_extra">扶风县老区</label>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner" style="line-height: 1.2em;">
+                    <div class="aui-list-item-label aui-font-size-14">详细地址</div>
+                    <div class="aui-list-item-input" style=" vertical-align:middle; overflow-x: hidden;overflow-y:visible">
+                        <input type="text" placeholder="请输入街道、楼牌号等" class="aui-font-size-14" v-model="address_info">
+                    </div>
+                </div>
+            </li>
+        </ul>
+
+    </div>
+    <div class="aui-margin-10 aui-margin-t-15">
+        <div class="aui-btn aui-btn-block aui-btn-orange" @click="add_address()">保存</div>
+    </div>
+
+</div>
+
+
+</body>
+</html>
+<script src="../../script/api.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/common.js"></script>
+<script>
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            token: '',
+            id: 0,
+            name: '',
+            mobile: '',
+            address_info: '',
+            address_extra: 0,
+        },
+        methods: {
+            add_address: function () {
+                if (vm.name == '') {
+                    api.toast({
+                        msg: '收货人不能为空',
+                        duration: 2000,
+                        location: 'bottom'
+                    });
+                    return false;
+                }
+                if (vm.mobile == '') {
+                    api.toast({
+                        msg: '请输入手机号码',
+                        duration: 2000,
+                        location: 'bottom'
+                    });
+                    return false;
+                }
+                if (!(/^1[3|4|5|7|8]\d{9}$/.test(vm.mobile))) {
+                    api.toast({
+                        msg: '手机号码有误',
+                        duration: 2000,
+                        location: 'bottom'
+                    });
+                    return false;
+                }
+                if (vm.address_info == '') {
+                    api.toast({
+                        msg: '详细地址不能为空',
+                        duration: 2000,
+                        location: 'bottom'
+                    });
+                    return false;
+                }
+                var temp_address_extra = '';
+                if (vm.address_extra == 0) {
+                    temp_address_extra = '扶风县新区';
+                } else {
+                    temp_address_extra = '扶风县老区';
+                }
+                api.ajax({
+                    url: update_address_url,
+                    method: 'post',
+                    timeout: 30,
+                    dataType: 'json',
+                    returnAll: false,
+                    data: {
+                        values: {
+                            token: vm.token,
+                            id: vm.id,
+                            name: vm.name,
+                            mobile: vm.mobile,
+                            address_info: vm.address_info,
+                            address_extra: temp_address_extra
+                        }
+                    }
+                }, function (ret, err) {
+                    if (ret) {
+                        console.log(JSON.stringify(ret));
+                        if (ret.status == 1) {
+                            api.toast({
+                                msg: ret.msg,
+                                duration: 2000,
+                                location: 'bottom'
+                            });
+                            api.sendEvent({
+                                name: 'address_list_init',
+                            });
+                            setTimeout(function () {
+                                api.closeWin({
+                                    name: 'address_edit_win'
+                                });
+                            }, 500);
+                            return false;
+                        }
+                    } else {
+                        console.log(JSON.stringify(err));
+                    }
+                });
+            }
+        }
+    });
+    apiready = function () {
+        vm.token = $api.getStorage('token');
+        var info = api.pageParam.info;
+        console.log(JSON.stringify(info));
+
+        vm.id = info.id;
+        vm.name = info.name;
+        vm.mobile = info.mobile;
+        if(info.address_extra == '扶风县新区'){
+            vm.address_extra = 0;
+        }else{
+            vm.address_extra = 1;
+        }
+        vm.address_info = info.address_info;
+
+    };
+</script>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>秒杀订单</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <style>
+		.aui-tab-item.aui-active {
+		color: #f39905;
+		border-bottom: 2px solid #f39905;}
+    </style>
+</head>
+<body>
+<header class="aui-bar aui-bar-nav aui-bar-light" id="aui-header">
+    <a class="aui-btn aui-pull-left" onclick="closeWin()">
+        <span class="aui-iconfont aui-icon-left aui-text-black"></span>
+    </a>
+    <div class="aui-title aui-font-size-16 aui-text-black">秒杀订单</div>
+</header>
+<div class="aui-tab" id="tab">
+    <div class="aui-tab-item" v-bind:class="{'aui-active':is_index==0}" @click="change_tab(0)">待付款</div>
+    <div class="aui-tab-item" v-bind:class="{'aui-active':is_index==1}" @click="change_tab(1)">待发货</div>
+    <div class="aui-tab-item" v-bind:class="{'aui-active':is_index==2}" @click="change_tab(2)">已发货</div>
+    <div class="aui-tab-item" v-bind:class="{'aui-active':is_index==3}" @click="change_tab(3)">已完成</div>
+<!--    <div class="aui-tab-item" v-bind:class="{'aui-active':is_index==4}" @click="change_tab(4)">已取消</div>-->
+</div>
+</body>
+</html>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/vue.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script>
+    //订单状态0：待付款，1：支付完成，待发货，2：已发货，3：已完成，-1：已取消
+    var vm = new Vue({
+        el: '#tab',
+        data: {
+            is_index: 0,
+        },
+        methods: {
+            change_tab: function (index) {
+                vm.is_index = index;
+                api.setFrameGroupIndex({
+                    name: 'orderframegroup',
+                    index: vm.is_index,
+                    scroll: false
+                });
+            }
+        }
+    });
+    apiready = function () {
+        $api.fixIos7Bar($api.dom("header"));//修复ios系统bar
+        api.openFrameGroup({
+            name: 'orderframegroup',
+            background: 'bgcolor',
+            scrollEnabled: true,
+            rect: {
+                x: 0,
+                y: $api.dom('header').offsetHeight + $api.byId('tab').offsetHeight,
+                w: 'auto',
+                h: api.winHeight - $api.dom('header').offsetHeight - $api.byId('tab').offsetHeight
+            },
+            index: 0,
+            frames: [
+                {
+                    name: 'seconds_kill_order_frm0',
+                    url: 'widget://html/member/seconds_kill_order_frm0.html',
+                    bgColor: 'bgcolor',
+                    bounces: true
+                },
+                {
+                    name: 'seconds_kill_order_frm1',
+                    url: 'widget://html/member/seconds_kill_order_frm1.html',
+                    bgColor: 'bgcolor',
+                    bounces: true
+                },
+                {
+                    name: 'seconds_kill_order_frm2',
+                    url: 'widget://html/member/seconds_kill_order_frm2.html',
+                    bgColor: 'bgcolor',
+                    bounces: true
+                },
+                {
+                    name: 'seconds_kill_order_frm3',
+                    url: 'widget://html/member/seconds_kill_order_frm3.html',
+                    bgColor: 'bgcolor',
+                    bounces: true
+                },
+                {
+                    name: 'seconds_kill_order_frm4',
+                    url: 'widget://html/member/seconds_kill_order_frm4.html',
+                    bgColor: 'bgcolor',
+                    bounces: true
+                },
+            ]
+        }, function (ret, err) {
+            console.log(JSON.stringify(ret));
+            vm.is_index = ret.index;
+        });
+    };
+</script>

@@ -1,0 +1,229 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>分类-品牌</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui-shop.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-flex-shop.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/wuju-catelist.css" />
+    <style>
+        .aui-content {
+            margin-bottom: 0px !important;
+        }
+        .aui-list-view:after {
+           border-top: none !important;
+        }
+    </style>
+
+</head>
+<body>
+<div id="app" v-cloak>
+    <!--分类-->
+    <div class="aui-content aui-hide" v-bind:class="{'aui-show':isfenlei == 1}">
+        <div class="aui-flex-col" id="isfenlei" style="border-top: none !important;">
+            <div class="aui-flex-item-3">
+                <ul class="aui-list-view" id="demo-box" style="margin-bottom: 0;background:#e3e3e3;">
+                    <template v-for="(vo,index) in list1">
+                        <li class="aui-list-view-cell"
+                            v-bind:class="{'aui-active':index==index_active}" @click="change_right(index)">
+                            {{vo.name}}
+                        </li>
+                    </template>
+                </ul>
+            </div>
+
+            <div class="aui-flex-item-9" style="border-top: none !important;">
+                <div class="aui-list-view" id="demo-box2" style="margin-bottom: 0; background:transparent;">
+                    <div class="aui-padded-10">
+                        <div class="aui-card-list-content">
+                            <img src="../../image/img6.png">
+                        </div>
+                        <template v-for="(list1_right,indexn) in list1">
+                        <div class="cateList aui-hide" v-bind:class="{'aui-show':index_active == indexn}"
+                             v-for="(vo1,index1) in list1_right.list">
+                            <div class="hd aui-text-center">
+                                <span class="text" >
+                                    <span >{{vo1.name}}</span>
+                                </span>
+                            </div>
+                            <ul class="aui-list-view aui-grid-view"
+                                style=" background:transparent; margin-bottom:0;padding-bottom:0;">
+                                <li class="aui-list-view-cell aui-img aui-col-xs-4" v-for="(vo2,index2) in vo1.list">
+                                    <div class="aui-padded-5" @click="open_goodslist(vo2)">
+                                        <img class="aui-img-object cateImg"
+                                             :src="cover_url + vo2.ad">
+                                        <div class="aui-img-body name aui-ellipsis-2">
+                                            {{vo2.name}}
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        </template>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+    <!--品牌-->
+    <div class="aui-content aui-hide" v-bind:class="{'aui-show':isbrand == 1}">
+        <div class="cateList aui-padded-t-15" id="isbrand">
+            <ul class="aui-list-view aui-grid-view aui-padded-t-10" style=" background:transparent;">
+                <transition-group name="list2" tag="p">
+                <li class="aui-list-view-cell aui-img aui-col-xs-3"
+                    v-for="(vo,index) in list2"
+                    @click="open_brandslist(vo)"
+                    v-bind:key="index">
+                    <div class="aui-padded-5 lazyarea">
+                        <img class="aui-img-object cateImg" :src="cover_url + vo.thumb">
+                        <div class="aui-img-body name aui-ellipsis-2">
+                            {{vo.name}}
+                        </div>
+                    </div>
+                </li>
+                </transition-group>
+            </ul>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/vue.js"></script>
+<script>
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            isfenlei:1,
+            isbrand:0,
+            cover_url:base_url,
+            list: [],
+
+            index_active:0,
+            list1:[],
+            //list1_right:[],
+
+            list2: [
+                {
+                    "create_time":null,
+                    "id":22,
+                    "name":"达利园",
+                    "order_num":1,
+                    "status":true,
+                    "thumb":"/upload/images/2017/08/20170825094216_53.png",
+                    "update_time":null
+                }
+            ],
+            frameh:0
+        },
+        methods: {
+            init: function () {
+                api.ajax({
+                    url: cate_list_url,
+                    method: 'post',
+                    timeout: 30,
+                    dataType: 'json',
+                    returnAll: false,
+                    data: {
+                        values: {
+                            name: 'values'
+                        }
+                    }
+                }, function (ret, err) {
+                    if (ret) {
+
+                        vm.list1 = ret.data;
+                        //vm.list1_right = ret.data[vm.index_active].list;
+                    } else {
+                        console.log(JSON.stringify(err));
+                    }
+                });
+                api.ajax({
+                    url: goods_brand_url,
+                    method: 'post',
+                    timeout: 30,
+                    dataType: 'json',
+                    returnAll: false,
+                    data: {
+                        values: {
+                            name: 'values'
+                        }
+                    }
+                }, function (ret, err) {
+                    if (ret) {
+
+                        vm.list2 = ret.data;
+                    } else {
+                        console.log(JSON.stringify(err));
+                    }
+                });
+            },
+            change_right:function (index) {
+                vm.index_active = index;
+                //vm.list1_right = vm.list1[index].list;;
+
+            },
+            open_goodslist:function (info) {
+
+                api.openWin({
+                    name: 'goodslist_win',
+                    url: 'widget://html/shop/goodslist_win.html',
+                    pageParam: {
+                        keywords: '',
+                        cate_id: info.id,
+                        brand_id:'',
+                        is_new:0,
+                        is_rec:0,
+                        is_hot:0,
+                        info:info
+                    }
+                });
+            },
+            open_brandslist:function (info) {
+                api.openWin({
+                    name: 'goodslist_win',
+                    url: 'widget://html/shop/goodslist_win.html',
+                    pageParam: {
+                        keywords: '',
+                        cate_id: '',
+                        brand_id:info.id,
+                        is_new:0,
+                        is_rec:0,
+                        is_hot:0,
+                        info:info
+                    }
+                });
+            }
+        }
+    });
+    apiready = function () {
+
+        vm.frameh = api.frameHeight;
+        vm.init();
+        $api.css($api.byId("demo-box"),'height:'+ vm.frameh+'px');
+        $api.css($api.byId("demo-box2"),'height:'+ vm.frameh+'px');
+
+        api.addEventListener({
+            name: 'isfenlei-isbrand'
+        }, function (ret, err) {
+
+            vm.isfenlei = ret.value.isfenlei;
+            vm.isbrand = ret.value.isbrand;
+            if(vm.isfenlei == 1){
+                setTimeout(function () {
+                    $api.css($api.byId("demo-box"),'height:'+ vm.frameh+'px');
+                    $api.css($api.byId("demo-box2"),'height:'+ vm.frameh+'px');
+                },100);
+            }
+
+        });
+    };
+</script>

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>商品列表</title>
+    <link rel="stylesheet" type="text/css" href="../../css/fontcss/iconfont.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <style>
+        .aui-tab-item.aui-active {color: #e89305;border-bottom: 2px solid #e89305;}
+		em.btm-act-icn-kf {
+			width: 23px;
+			height: 21px;
+			display: block;
+			margin: 0 auto;
+			margin-top: 10px;
+			background: url(../../image/ico-kf.png) 0 0 no-repeat;
+			background-size:100% 100%;
+		}
+		em.btm-act-icn-gw {
+			width: 23px;
+			height: 21px;
+			display: block;
+			margin: 0 auto;
+			margin-top: 10px;
+			background: url(../../image/ico-gw.png) 0 0 no-repeat;
+			background-size:100% 100%;
+		}
+		em.btm-act-icn-sc {
+			width: 23px;
+			height: 21px;
+			display: block;
+			margin: 0 auto;
+			margin-top: 10px;
+			background: url(../../image/ico-sc.png) 0 0 no-repeat;
+			background-size:100% 100%;
+		}
+		em.btm-act-icn-qxsc {
+			width: 23px;
+			height: 21px;
+			display: block;
+			margin: 0 auto;
+			margin-top: 10px;
+			background: url(../../image/ico-qxsc.png) 0 0 no-repeat;
+			background-size:100% 100%;
+		}
+		.aui-btn{border-radius:1rem;}
+
+    </style>
+</head>
+<body>
+    <div id="app" v-cloak>
+        <header class="aui-bar aui-bar-nav aui-bar-light">
+            <a class="aui-pull-left aui-btn" onclick="closeWin()">
+                <span class="aui-iconfont aui-icon-left aui-text-black"></span>
+            </a>
+            <div class="aui-title">
+                <div class="aui-tab ">
+                    <div class="aui-tab-item aui-font-size-14" v-bind:class="{'aui-active':index==0}" @click="change_tab(0)">商品</div>
+                    <div class="aui-tab-item aui-font-size-14" v-bind:class="{'aui-active':index==1}" @click="change_tab(1)">详情</div>
+                    <div class="aui-tab-item aui-font-size-14" v-bind:class="{'aui-active':index==2}" @click="change_tab(2)">评论</div>
+                </div>
+            </div>
+            <a class="aui-pull-right aui-btn aui-pull-right" @click="share_goods()">
+                <div class="aui-btn aui-btn-info" >
+                    <span class="aui-iconfont aui-icon-share aui-text-black" ></span>
+                </div>
+            </a>
+        </header>
+        <footer class="aui-bar aui-bar-tab aui-border-t" id="footer">
+            <div class="aui-row">
+                <div class="aui-col-xs-3">
+                    <em class="btm-act-icn-kf"></em>
+                    <span class="aui-font-size-12 aui-text-black" onclick="open_meiQia()">客服</span>
+                </div>
+                <div class="aui-col-xs-3" onclick="set_show_cart()">
+                    <em class="btm-act-icn-gw"></em>
+                    <span class="aui-font-size-12 aui-text-black">购物车</span>
+                </div>
+                <div class="aui-col-xs-3">
+                    <template v-if="index_active == 0">
+                        <em class="btm-act-icn-qxsc" @click="goods_collect(1)"></em>
+                        <span class="aui-font-size-12 aui-text-black">收藏</span>
+                    </template>
+                    <template v-else>
+                        <em class="btm-act-icn-sc" @click="goods_collect(0)"></em>
+                        <span class="aui-font-size-12 aui-text-black">已收藏</span>
+                    </template>
+                </div>
+                <div class="aui-col-xs-3 aui-padded-t-15">
+                    <div class="aui-btn aui-font-size-12" style="width:100%;" @click="add_to_cart()">加入购物车</div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+</body>
+</html>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/vue.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script>
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            token:'',
+            index: 0,
+            id: 0,
+            index_active:1,
+            goods_name:''
+        },
+        methods: {
+            init: function () {
+                api.openFrameGroup({
+                    name: 'goods_showfrm',
+                    background: 'bgcolor',
+                    scrollEnabled: false,
+                    rect: {
+                        x: 0,
+                        y: $api.dom('header').offsetHeight,
+                        w: 'auto',
+                        h: api.winHeight - $api.dom('header').offsetHeight - $api.dom('footer').offsetHeight
+                    },
+                    index: 0,
+                    frames: [
+                        {
+                            name: 'goodshow_intro',
+                            url: 'widget://html/shop/goodshow_intro.html',
+                            bgColor: 'bgcolor',
+                            bounces: false,
+                            pageParam: {
+                                id: vm.id
+                            }
+                        },
+                        {
+                            name: 'goodshow_detail',
+                            url: 'widget://html/shop/goodshow_detail.html',
+                            bgColor: 'bgcolor',
+                            bounces: true,
+                            pageParam: {
+                                id: vm.id
+                            }
+                        },
+                        {
+                            name: 'goodshow_evaluation',
+                            url: 'widget://html/shop/goodshow_evaluation.html',
+                            bgColor: 'bgcolor',
+                            bounces: true,
+                            pageParam: {
+                                id: vm.id
+                            }
+                        }
+                    ]
+                }, function (ret, err) {
+                    vm.index = ret.index;
+                });
+            },
+            change_tab:function (index) {
+                vm.index = index;
+                api.setFrameGroupIndex({
+                    name: 'goods_showfrm',
+                    index: index,
+                    scroll: false
+                });
+            },
+            add_to_cart:function () {
+                vm.token = $api.getStorage('token');
+                if(vm.token){
+                    api.sendEvent({
+                        name: 'add_to_cart_init',
+                    });
+                }else{
+                    check_login();
+                }
+            },
+            goods_collect:function (index) {
+                check_login();
+                if(vm.token){
+                    if(index == 1){
+                        var act_url = goods_collect_url;
+                    }else{
+                        var act_url = goods_uncollect_url;
+                    }
+                    api.ajax({
+                        url: act_url,
+                        method: 'post',
+                        timeout: 30,
+                        dataType: 'json',
+                        returnAll: false,
+                        data: {
+                            values: {
+                                token: vm.token,
+                                goods_id: vm.id
+                            }
+                        }
+                    }, function (ret, err) {
+                        if (ret) {
+
+                            api.toast({
+                                msg: ret.msg,
+                                duration: 2000,
+                                location: 'bottom'
+                            });
+                            vm.index_active = index;
+                        } else {
+                            console.log(JSON.stringify(err));
+                        }
+                    });
+                }else{
+                    api.toast({
+                        msg: '未登录',
+                        duration: 2000,
+                        location: 'bottom'
+                    });
+                }
+            },
+            share_goods: function () {
+                var sharedModule = api.require('shareAction');
+                sharedModule.share({
+                    text: '蜗居商城-'+vm.goods_name,
+                    type: 'url',
+                    path: goods_introShare_url + vm.id
+                });
+            }
+        }
+    });
+    apiready = function () {
+        $api.fixIos7Bar($api.dom("header"));//修复ios系统bar
+        vm.id = api.pageParam.id;
+        vm.token = $api.getStorage('token');
+        vm.init();
+        api.ajax({
+            url: goods_info_url,
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            returnAll: false,
+            data: {
+                values: {
+                    goods_id: vm.id,
+                    token:$api.getStorage('token')
+                }
+            }
+        }, function (ret, err) {
+            if (ret) {
+                vm.index_active = ret.is_collect;
+                vm.goods_name = ret.data.goods.name;
+            } else {
+                console.log(JSON.stringify(err));
+            }
+        });
+    };
+</script>

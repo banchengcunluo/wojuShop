@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>信息发布-全职招聘</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/fontcss/iconfont.css" />
+    <style>
+	.aui-list .aui-list-item-label{ width:25%;}
+	aui-input, input[type="text"], input[type="password"], input[type="search"], input[type="email"], input[type="tel"], input[type="url"], input[type="date"], input[type="datetime-local"], input[type="time"], input[type="number"], select, textarea{font-size: 0.7rem !important;}
+	.aui-list textarea{ height:auto;}
+	.aui-radio:checked, .aui-radio.aui-checked, .aui-checkbox:checked, .aui-checkbox.aui-checked{background-color:#f39b0a;border: solid 1px #f39b0a;}
+	.aui-radio, .aui-checkbox{margin-top: 0.2rem;width:0.8rem;height:0.8rem; }
+
+	.aui-list-item-label{font-size: 0.7rem !important;}
+	.aui-list-item-input{font-size: 0.7rem !important;}
+	select{font-size: 0.7rem !important;}
+
+	input[type="number"]{border-radius:4px;height: 1.3rem; margin:5px; text-align: center;}
+    </style>
+</head>
+<body>
+<div class="aui-content aui-margin-b-15" id="app" v-cloak="">
+    <div class="aui-padded-15">
+        <div class="aui-card-list-content" @click="select_cover()">
+            <img :src="cover" class="aui-img-round" style="width:4rem;margin:auto;">
+        </div>
+    </div>
+    <ul class="aui-list aui-form-list aui-shadow aui-list-noborder aui-margin-t-10 aui-margin-b-10">
+        <li class="aui-list-header aui-bg-orange aui-font-size-14" style=" color:#fff;">基本信息</li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label"> 标题:</div>
+                <div class="aui-list-item-input">
+                    <input type="text" placeholder="标题" v-model="title">
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">我的性别:</div>
+                <div class="aui-list-item-input">
+                    <select v-model="sex">
+                        <option value="1">男</option>
+                        <option value="2">女</option>
+                    </select>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label"> 我的年龄:</div>
+                <div class="aui-list-item-input">
+                    <input type="text" placeholder="我的年龄" v-model="age">
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label"> 我的身高:</div>
+                <div class="aui-list-item-input">
+                    <input type="text" placeholder="我的身高" v-model="height">
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label"> 我的体重:</div>
+                <div class="aui-list-item-input">
+                    <input type="text" placeholder="我的体重" v-model="weight">
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">我的籍贯:</div>
+                <div class="aui-list-item-input">
+                    <input type="text" placeholder="籍贯" v-model="native_place">
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">我的学历:</div>
+                <div class="aui-list-item-input">
+                    <select v-model="education">
+                        <option value="0">不限</option>
+                        <option value="1">高中</option>
+                        <option value="2">大专</option>
+                        <option value="3">本科</option>
+                        <option value="4">硕士</option>
+                        <option value="5">博士</option>
+                    </select>
+                </div>
+            </div>
+        </li> 
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">我的收入:</div>
+                <div class="aui-list-item-input">
+                    <select v-model="income">
+                    	<option value="0">保密</option>
+                        <option value="1">0-1000</option>
+                        <option value="2">1000-2000</option>
+                        <option value="3">2000-3000</option>
+                        <option value="4">3000-5000</option>
+                        <option value="5">5000-8000</option>
+                        <option value="6">8000-10000</option>
+                        <option value="7">10000-15000</option>
+                        <option value="8">15000-20000</option>
+                        <option value="9">20000-50000</option>
+                        <option value="10">50000以上</option>
+                    </select>
+                </div>
+            </div>
+        </li> 
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">我的住房:</div>
+                <div class="aui-list-item-input">
+                    <select v-model="house">
+                    	<option value="0">保密</option>
+                        <option value="1">有房</option>
+                        <option value="2">无房</option>
+                    </select>
+                </div>
+            </div>
+        </li> 
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">我的星座:</div>
+                <div class="aui-list-item-input">
+                    <select v-model="star">
+                    	<option value="1">水瓶座</option>
+                        <option value="2">双鱼座</option>
+                        <option value="3">白羊座</option>
+                        <option value="4">金牛座</option>
+                        <option value="5">双子座</option>
+                        <option value="6">巨蟹座</option>
+                        <option value="7">狮子座</option>
+                        <option value="8">处女座</option>
+                        <option value="9">天秤座</option>
+                        <option value="10">天蝎座</option>
+                        <option value="11">射手座</option>
+                        <option value="12">摩羯座</option>
+                    </select>
+                </div>
+            </div>
+        </li> 
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">交友描述:</div>
+                <div class="aui-list-item-input">
+                    <textarea placeholder="10-200字之间" v-model="desc"></textarea>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-header aui-bg-orange aui-font-size-14" style=" color:#fff;">交友要求</li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">年龄要求:</div>
+                <div class="aui-list-item-input">
+                    <select v-model="age_req">
+                    	<option value="0">不限</option>
+                        <option value="1">16岁以下</option>
+                        <option value="2">16-20岁</option>
+                        <option value="3">20-25岁</option>
+                        <option value="4">25-30岁</option>
+                        <option value="5">30-35岁</option>
+                        <option value="6">35-40岁</option>
+                        <option value="7">40-50岁</option>
+                        <option value="8">50-60岁</option>
+                        <option value="9">60岁以上</option>
+                    </select>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">身高要求:</div>
+                <div class="aui-list-item-input">
+                    <select v-model="height_req">
+                    	<option value="0">不限</option>
+                    	<option value="1">150cm以下</option>
+                    	<option value="2">150-155cm</option>
+                    	<option value="3">155-160cm</option>
+                    	<option value="4">160-165cm</option>
+                    	<option value="5">165-170cm</option>
+                    	<option value="6">170-175cm</option>
+                    	<option value="7">175-180cm</option>
+                    	<option value="8">180-185cm</option>
+                    	<option value="9">185cm以上</option>
+                    </select>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">学历要求:</div>
+                <div class="aui-list-item-input">
+                    <select v-model="education_req">
+                        <option value="0">不限</option>
+                        <option value="1">高中</option>
+                        <option value="2">大专</option>
+                        <option value="3">本科</option>
+                        <option value="4">硕士</option>
+                        <option value="5">博士</option>
+                    </select>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">住房要求:</div>
+                <div class="aui-list-item-input">
+                    <select v-model="house_req">
+                        <option value="0">保密</option>
+                        <option value="1">有房</option>
+                        <option value="2">无房</option>
+                    </select>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">收入要求:</div>
+                <div class="aui-list-item-input">
+                    <select v-model="income_req">
+                        <option value="0">保密</option>
+                        <option value="1">0-1000</option>
+                        <option value="2">1000-2000</option>
+                        <option value="3">2000-3000</option>
+                        <option value="4">3000-5000</option>
+                        <option value="5">5000-8000</option>
+                        <option value="6">8000-10000</option>
+                        <option value="7">10000-15000</option>
+                        <option value="8">15000-20000</option>
+                        <option value="9">20000-50000</option>
+                        <option value="10">50000以上</option>
+                    </select>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">联系人:</div>
+                <div class="aui-list-item-input">
+                    <input type="text" placeholder="联系人" v-model="contacts">
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">联系电话:</div>
+                <div class="aui-list-item-input">
+                    <input type="text" placeholder="联系电话" v-model="telephone">
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">QQ号码:</div>
+                <div class="aui-list-item-input">
+                    <input type="number" placeholder="" v-model="qq">
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">微信号:</div>
+                <div class="aui-list-item-input">
+                    <input type="text" placeholder="微信号" v-model="webchat">
+                </div>
+            </div>
+        </li>
+    </ul>
+</div>
+</body>
+</html>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/vue.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script>
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            token: '',
+            base_url:base_url,
+            cover_url:'',
+            cover:'../../image/user_pic.png',
+            thumb:'',
+
+            title:'',
+            sex:1,
+            age:23,
+            height:180,
+            weight:150,
+            native_place:'',
+            education:3,
+            income:0,
+            house:0,
+            star:1,
+            desc:'',
+
+            age_req:0,
+            height_req:0,
+            education_req:3,
+            house_req:0,
+            income_req:0,
+            contacts:'',//联系人
+            telephone:'',//手机
+            qq:'',
+            webchat:''
+        },
+        methods: {
+            init: function () {
+                if (!(/^1[3|4|5|7|8]\d{9}$/.test(vm.telephone))) {
+                    api.toast({
+                        msg: '联系电话有误',
+                        duration: 2000,
+                        location: 'bottom'
+                    });
+                    return false;
+                }
+                api.ajax({
+                    url: friends_add_url,
+                    method: 'post',
+                    timeout: 30,
+                    dataType: 'json',
+                    returnAll: false,
+                    data: {
+                        values: {
+                            token: vm.token,
+                            title: vm.title,
+                            sex: vm.sex,
+                            age: vm.age,
+                            height: vm.height,
+                            weight: vm.weight,
+                            native_place: vm.native_place,
+                            education: vm.education,
+                            income: vm.income,
+                            house: vm.house,
+                            star: vm.star,
+                            desc: vm.desc,
+                            age_req: vm.age_req,
+                            height_req: vm.height_req,
+                            education_req: vm.education_req,
+                            house_req: vm.house_req,
+                            income_req: vm.income_req,
+                            contacts: vm.contacts,
+                            telephone: vm.telephone,
+                            qq: vm.qq,
+                            webchat: vm.webchat,
+                            thumb: vm.thumb
+                        }
+                    }
+                }, function (ret, err) {
+                    if (ret) {
+
+                        api.toast({
+                            msg: ret.msg,
+                            duration: 2000,
+                            location: 'bottom'
+                        });
+                        if(ret.status == 1){
+                            api.sendEvent({
+                                name: 'friends_list_init',
+                            });
+                            setTimeout(function () {
+                                api.closeWin({
+                                    name: 'jiaoyou-posted_win'
+                                });
+                            },1000)
+                        }
+                    } else {
+                        console.log(JSON.stringify(err));
+                    }
+                });
+            },
+            select_cover:function () {
+                api.getPicture({
+                    sourceType: 'library',
+                    encodingType: 'jpg',
+                    mediaValue: 'pic',
+                    destinationType: 'url',
+                    allowEdit: true,
+                    quality: 50,
+                    targetWidth: 100,
+                    targetHeight: 100,
+                    saveToPhotoAlbum: false
+                }, function(ret, err) {
+                    if (ret) {
+                        console.log(JSON.stringify(ret));
+                        if(ret.data){
+                            vm.cover = ret.data;
+                            vm.file_upload();
+                        }
+                    } else {
+                        alert(JSON.stringify(err));
+                    }
+                });
+            },
+            file_upload:function () {
+                api.ajax({
+                    url: upload_url,
+                    method: 'post',
+                    timeout: 30,
+                    dataType: 'json',
+                    returnAll: false,
+                    data: {
+                        values: {
+                            token: vm.token
+                        },
+                        files: {
+                            file: vm.cover
+                        }
+                    }
+                }, function (ret, err) {
+                    if (ret) {
+                        console.log(JSON.stringify(ret));
+                        vm.cover_url = ret.path + '/' + ret.name;
+                        vm.thumb = ret.path + '/' + ret.name;
+                    } else {
+                        console.log(JSON.stringify(err));
+                    }
+                });
+            },
+        }
+    });
+
+    apiready = function () {
+        vm.token = $api.getStorage('token');
+        api.addEventListener({
+            name: 'friends_add_init'
+        }, function (ret, err) {
+            vm.init();
+        });
+    };
+</script>

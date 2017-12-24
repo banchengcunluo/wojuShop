@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>订单</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <style>
+        button, .aui-btn {
+            font-size: 0.6rem;
+            height: 1.2rem;
+            line-height: 1.2rem;
+        }
+        .aui-content{
+            margin-top: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+<div class="aui-content aui-margin-b-15" id="app" v-cloak="">
+    <template v-for="(vo,index) in list">
+        <ul class="aui-list aui-media-list aui-margin-b-10 aui-shadow aui-list-noborder">
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-row aui-border-b aui-padded-b-5">
+                        <div class="aui-col-xs-9 aui-font-size-14 aui-text-left">
+                            订单编号：{{vo.order_sn}}
+                        </div>
+                        <div class="aui-col-xs-3 aui-font-size-14 aui-text-right aui-text-gray">
+                            <i class="aui-iconfont aui-icon-trash"></i>
+                        </div>
+                    </div>
+                    <div class="aui-media-list-item-inner aui-border-b" @click="open_bulk_goodslist_detail_win(index)">
+                        <div class="aui-list-item-media">
+                            <img :src="cover_url+vo.thumb" class="aui-shadow aui-radius-4">
+                        </div>
+                        <div class="aui-list-item-inner aui-padded-r-0">
+                            <div class="aui-list-item-text">
+                                <div class="aui-list-item-title aui-font-size-12 aui-ellipsis-2">
+                                    {{vo.goods_name}}
+                                </div>
+                            </div>
+                            <div class="aui-info aui-margin-t-5" style="padding:0">
+                                <div class="aui-info-item aui-text-orange">
+                                    ￥{{vo.groupon_price}}元
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="aui-border-b aui-padded-b-10 aui-padded-t-10 aui-font-size-12 aui-text-right">
+                        合计：￥{{vo.order_price}}
+                    </div>
+                    <div class="aui-padded-t-10  aui-text-right">
+                        <div class="aui-btn  aui-btn-outlined" @click="open_order_evaluatelist_win(index)">立即评价</div>
+                        <!--
+                        <div class="aui-btn  aui-btn-outlined-orange aui-text-orange">再次购买</div>
+                        -->
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </template>
+</div>
+
+
+</body>
+</html>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/vue.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script>
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            cover_url:base_url,
+            token:'',
+            list: [],
+            status:3,
+            page:1,
+            pagesize:10
+        },
+        methods: {
+            init: function () {
+                api.ajax({
+                    url: groupon_order_list_url,
+                    method: 'post',
+                    timeout: 30,
+                    dataType: 'json',
+                    returnAll: false,
+                    data: {
+                        values: {
+                            token: vm.token,
+                            status: vm.status,
+                            page:vm.page,
+                            pagesize:vm.pagesize
+                        }
+                    }
+                }, function (ret, err) {
+                    if (ret) {
+                        if (vm.page == 1) {
+                            vm.list = ret.data.list;
+                        } else {
+                            if(ret.data.list.length == 0 ){
+                                api.toast({
+                                    msg: '加载完成',
+                                    duration: 2000,
+                                    location: 'bottom'
+                                });
+                                return false;
+                            }
+                            for (var i = 0; i < ret.data.list.length; i++) {
+                                vm.list.push(ret.data.list[i]);
+                            }
+                        }
+                        console.log(JSON.stringify(ret));
+                    } else {
+                        console.log(JSON.stringify(err));
+                    }
+                });
+            },
+            open_bulk_goodslist_detail_win:function (index) {
+                api.openWin({
+                    name: 'bulk_goodslist_detail_win',
+                    url: 'widget://html/shop/bulk_goodslist_detail_win.html',
+                    pageParam: {
+                        id: vm.list[index].goods_id
+                    }
+                });
+            },
+            open_order_evaluatelist_win:function (index) {
+                api.openWin({
+                    name: 'order_evaluatelist_win',
+                    url: 'widget://html/member/order_evaluatelist_win.html',
+                    pageParam: {
+                        id: vm.list[index].id
+                    }
+                });
+            }
+        }
+    });
+    apiready = function () {
+        vm.token = $api.getStorage('token');
+        vm.init();
+        api.setRefreshHeaderInfo({
+            visible: true,
+            loadingImg: 'widget://image/refresh.png',
+            bgColor: '#ccc',
+            textColor: '#fff',
+            textDown: '下拉刷新...',
+            textUp: '松开刷新...',
+            showTime: true
+        }, function (ret, err) {
+            vm.page = 1;
+            vm.init();
+            setTimeout("api.refreshHeaderLoadDone()", '500');
+        });
+
+        api.addEventListener({
+            name:'scrolltobottom',
+            extra:{
+                threshold:300
+            }
+        }, function(ret, err){
+            vm.page += 1;
+            vm.init();
+        });
+    };
+</script>

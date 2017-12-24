@@ -1,0 +1,126 @@
+/**
+    公共样式表
+**/
+[v-cloak] {
+    display: none;
+}
+.list-enter-active, .list-leave-active {
+    transition: all 1s;
+}
+.list-enter, .list-leave-active {
+    opacity: 0;
+    transform: translateY(30px);
+}
+.block{box-shadow: 0 1px 6px rgba(0,0,0,.2); background-color:#FFFFFF; overflow:hidden;margin:0.6rem 0;padding: 0 10px;}
+.red{ color:#fb4444;}
+
+.woju-huicolor{
+    color: #757575 !important;
+}
+.woju-baicolor{
+    color: #FFFFFF !important;
+}
+
+.aui-bg-white {background-color: #FFFFFF !important;}
+.aui-bg-black{background-color: #000000 !important;}
+.aui-bg-orange{background-color: #f39905 !important;}
+
+.aui-shadow{box-shadow: 0 1px 6px rgba(0,0,0,.2);}
+.aui-radius-4{border-radius:4px; }
+
+.aui-text-orange {color: #f39905 !important;}
+.aui-text-black{color: #000000 !important;}
+.aui-text-gray{color: #666666 !important;}
+
+.aui-btn-orange{color: #ffffff !important;background-color: #f39905 !important;}
+
+.aui-label-orange {color: #ffffff; background-color: #f39905;}
+
+.aui-bg-list{border-radius:4px; background:#fff; border:1px solid #ddd;}
+
+.aui-btn-outlined-orange{background: transparent !important;border: 1px solid #f39905;}
+/**
+    AUI重写css
+**/
+.aui-bar-light {color: #4A4A4A;}
+.aui-ellipsis-2 {
+    display: -webkit-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-wrap: break-word;
+    word-break: break-all;
+    white-space: normal !important;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+/**分类样式**/
+.aui-list-view-cell.aui-active{ background:#fff;color: #f39905;}
+
+.cateList .hd {height:2.4rem;line-height:2.4rem;text-align: center;font-size:0.7rem;color: #333;}
+.cateList .hd .text {position: relative; background:transparent}
+.cateList .hd .text:after, .cateList .hd .text:before {background-color: #333;}
+.cateList .hd .text:before {left: -1.4rem;}
+.cateList .hd .text:after, .cateList .hd .text:before {
+    position: absolute;
+    content: '';
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    height: 1px;
+    width: 1rem;
+    background-color: #333;
+    -webkit-transform-origin: 50% 100% 0;
+    transform-origin: 50% 100% 0;
+}
+.cateList .hd .text:after{right:-1.4rem;}
+
+.cateImg {display: block; width: 100%;background: #fff;box-shadow: 0 0px 6px rgba(0,0,0,.2); border-radius:4px;}
+
+.aui-list-view.aui-grid-view .aui-list-view-cell .aui-img-body.name {height:1.8rem;font-size: 0.6rem;color: #333;text-align: center;line-height:0.8rem;}
+.aui-list-view.aui-grid-view .aui-list-view-cell .aui-img-body.name { height:1.8rem;padding: 5px 0;}
+
+
+.woju-bgimg-no{
+    background-image: none !important;
+}
+
+
+/**banner start**/
+#slider {
+    width: 100%;
+    height:350px;
+    overflow: hidden;
+    position:relative;
+}
+#slider .swiper-slide {
+    position:relative;
+    text-align:center;
+}
+#slider img {
+    width: 100%;
+    height:350px;
+}
+#slider .swiper-pagination {
+    position: absolute;
+    z-index: 20;
+    bottom: 10px;
+    width: 100px;
+    text-align: center;
+    left:40%;
+}
+#slider .swiper-pagination-bullet {
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    border-radius:5px;
+    background: #fff;
+    margin: 0 2px;
+    opacity: 0.8;
+    cursor: pointer;
+}
+#slider .swiper-pagination-bullet-active {
+    background: #f39905;
+}
+/**banner end**/
+

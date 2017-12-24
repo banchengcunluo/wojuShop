@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,initial-scale=1.0,width=device-width"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>购物车</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+     <link rel="stylesheet" type="text/css" href="../../css/fontcss/iconfont.css" />
+</head>
+<style>
+.iconfont{ font-size:1.4rem;}
+.aui-list{ border:none; background:none;}
+.aui-list .aui-list-item{ border:none; background:none; border-bottom:1px dashed #cbcbcb;}
+.aui-list .aui-list-item:last-child{ border-bottom:none;}
+.aui-radio:checked, .aui-radio.aui-checked, .aui-checkbox:checked, .aui-checkbox.aui-checked {
+    background-color: #f39905;
+    border: solid 1px #f39905;
+    text-align: center;
+    background-clip: padding-box;
+}
+
+.wexinpay-active {  color: #00C800 !important;  }
+.zhifubaopay-active {  color: #00AAEE !important;  }
+</style>
+<body>
+<div class="aui-content" id="app" v-cloak="">
+	<h3 class="aui-padded-10">选择支付方式</h3>
+    <ul class="aui-list aui-padded-10 aui-shadow aui-bg-white">
+        <li class="aui-list-item aui-padded-b-10">
+            <div class="aui-list-item-label-icon wexinpay-active">
+                <i class="iconfont icon-yingdaicon04"></i>
+            </div>
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-title aui-font-size-14">微信
+                    <p class="aui-font-size-12">亿万用户的选择</p>
+                </div>
+                <div class="aui-list-item-right">
+                    <input type="radio"  class="aui-radio" value="0" v-model="pay_type">
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item aui-padded-t-10">
+            <div class="aui-list-item-label-icon zhifubaopay-active">
+                <i class="iconfont icon-zhifubao aui-font-size-20"></i>
+            </div>
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-title">支付宝
+                    <p class="aui-font-size-12">推荐使用---支付更优惠</p>
+                </div>
+                <div class="aui-list-item-right">
+                    <input type="radio" class="aui-radio" value="1" v-model="pay_type">
+                </div>
+            </div>
+        </li>
+    </ul>
+    <div class=" aui-margin-10 aui-margin-t-15">
+        <p>支付金额：{{order_price}}</p>
+    </div>
+    <div class=" aui-margin-10 aui-margin-t-15">
+        <a href="javascript:void(0);" class="aui-btn aui-btn-block aui-btn-orange" @click="init()">确定</a>
+    </div>
+</div>
+</body>
+</html>
+<script src="../../script/api.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/common.js"></script>
+<script>
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            pay_type:1,//1:支付宝，0：微信
+            token:'',
+            order_info: [],
+            order_price: '0.00',
+            form:'',
+            wxform:''
+
+        },
+        methods: {
+            init: function (index) {
+
+                console.log(JSON.stringify(vm.order_info));
+                //支付宝
+                if(vm.pay_type == 1){
+                    api.ajax({
+                        url: groupon_aliPay_url,
+                        method: 'post',
+                        timeout: 30,
+                        dataType: 'json',
+                        returnAll: false,
+                        data: {
+                            values: {
+                                token: vm.token,
+                                id: vm.order_info.id,
+                            }
+                        }
+                    }, function (ret, err) {
+                        if (ret) {
+                            console.log(JSON.stringify(ret));
+                            if(ret.status == 1){
+                                vm.form = ret.data.form;
+                                var aliPay = api.require('aliPay');
+                                aliPay.payOrder({
+                                    orderInfo: vm.form
+                                }, function(ret, err) {
+                                    api.sendEvent({
+                                        name: 'usercenter_init'
+                                    });
+                                    var msg = '';
+                                    if(ret.code == 9000){
+                                        msg = '支付成功';
+                                    }
+                                    if(ret.code == 6001){
+                                        msg = '取消支付';
+                                    }
+                                    if(ret.code == 4006){
+                                        msg = '支付失败';
+                                    }
+                                    api.alert({
+                                        title: '支付结果',
+                                        msg: msg,
+                                        buttons: ['确定']
+                                    });
+                                    api.closeToWin({
+                                        name: 'root'
+                                    });
+                                });
+                            }
+                        } else {
+                            alert(JSON.stringify(err));
+                        }
+                    });
+
+                }
+
+                //微信支付
+                if(vm.pay_type == 0){
+                    console.log(vm.token);
+                    console.log(vm.order_info.id);
+                    api.ajax({
+                        url: groupon_weixinPay_url,
+                        method: 'post',
+                        timeout: 30,
+                        dataType: 'json',
+                        returnAll: false,
+                        data: {
+                            values: {
+                                token: vm.token,
+                                id: vm.order_info.id
+                            }
+                        }
+                    }, function (ret, err) {
+                        if (ret) {
+
+                            console.log(JSON.stringify(ret));
+                            vm.wxform = ret.data;
+                            var wxPay = api.require('wxPay');
+                            console.log(JSON.stringify(vm.wxform));
+                            wxPay.payOrder({
+                                apiKey: vm.wxform.appid,
+                                orderId: vm.wxform.prepayid,
+                                mchId: vm.wxform.partnerid,
+                                nonceStr: vm.wxform.noncestr,
+                                timeStamp: vm.wxform.timestamp,
+                                package: vm.wxform.package,
+                                sign: vm.wxform.sign
+                            }, function(ret, err) {
+                                api.sendEvent({
+                                    name: 'usercenter_init'
+                                });
+                                if (ret.status) {
+                                    api.alert({
+                                        title: '支付结果',
+                                        msg: '付款成功',
+                                        buttons: ['确定']
+                                    });
+                                    api.closeToWin({
+                                        name: 'root'
+                                    });
+                                } else {
+                                    api.alert({
+                                        title: '支付结果',
+                                        msg: '付款失败',
+                                        buttons: ['确定']
+                                    });
+                                    api.closeToWin({
+                                        name: 'root'
+                                    });
+                                }
+                            });
+                        } else {
+                            console.log(JSON.stringify(err));
+                        }
+                    });
+                }
+            }
+        }
+    });
+    apiready = function () {
+        vm.token = $api.getStorage('token');
+        vm.order_info = api.pageParam.order_info;
+        vm.order_price = api.pageParam.order_price;
+    };
+</script>

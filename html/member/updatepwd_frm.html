@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,initial-scale=1.0,width=device-width"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>修改密码</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/fontcss/iconfont.css" />
+    <style type="text/css">
+	body{ background:#fff;}
+	.aui-list{ background-image:none;}
+    </style>
+    
+</head>
+<body>
+<section class="aui-content" id="app" v-cloak>
+	<ul class="aui-list aui-form-list aui-padded-15">
+        <li class="aui-list-item aui-padded-l-0">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label aui-font-size-14">
+                    <i class="iconfont icon-suo aui-font-size-20 aui-margin-r-5"></i> 原密码
+                </div>
+                <div class="aui-list-item-input">
+                    <input type="password" placeholder="初始密码" class="aui-font-size-14" v-model="old_password">
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item aui-padded-l-0">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label aui-font-size-14">
+                    <i class="iconfont icon-suo aui-font-size-20 aui-margin-r-5"></i> 新密码
+                </div>
+                <div class="aui-list-item-input aui-font-size-14">
+                    <input type="password" placeholder="6-18位字符" class="aui-font-size-14" v-model="new_password">
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item aui-padded-l-0">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label aui-font-size-14">
+                    <i class="iconfont icon-suo aui-font-size-20 aui-margin-r-5"></i> 确认密码
+                </div>
+                <div class="aui-list-item-input aui-font-size-14">
+                    <input type="password" placeholder="6-18位字符" class="aui-font-size-14" v-model="new_password2">
+                </div>
+            </div>
+        </li>
+    </ul>
+    <div class="aui-margin-15">
+    	<div class="aui-btn aui-btn-block aui-btn-orange" @click="updatepassword()">确认修改</div>
+    </div>    
+</section>
+</body>
+</html>
+<script src="../../script/api.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/common.js"></script>
+<script>
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            token: '',
+            old_password: '',
+            new_password: '',
+            new_password2: ''
+        },
+        methods: {
+            updatepassword: function () {
+                if (vm.old_password == '') {
+                    api.toast({
+                        msg: '输入原始密码',
+                        duration: 2000,
+                        location: 'bottom'
+                    });
+                    return false;
+                }
+                if (vm.new_password == '') {
+                    api.toast({
+                        msg: '输入新密码',
+                        duration: 2000,
+                        location: 'bottom'
+                    });
+                    return false;
+                }
+                if (vm.new_password != vm.new_password2) {
+                    api.toast({
+                        msg: '两次设置密码不一致',
+                        duration: 2000,
+                        location: 'bottom'
+                    });
+                    return false;
+                }
+                api.ajax({
+                    url: updatepassword_url,
+                    method: 'post',
+                    timeout: 30,
+                    dataType: 'json',
+                    returnAll: false,
+                    data: {
+                        values: {
+                            token: vm.token,
+                            old_password: vm.old_password,
+                            new_password: vm.new_password,
+                        }
+                    }
+                }, function (ret, err) {
+                    if (ret) {
+                        console.log(JSON.stringify(ret));
+                        if(ret.status == 1){
+                            api.toast({
+                                msg: ret.msg,
+                                duration: 2000,
+                                location: 'bottom'
+                            });
+                            setTimeout(function () {
+                                api.closeWin({
+                                    name: 'updatepwd_win'
+                                });
+                            },1000);
+                            return false;
+                        }
+                    } else {
+                        alert(JSON.stringify(err));
+                    }
+                });
+            }
+        }
+    });
+    apiready = function () {
+        vm.token = $api.getStorage('token');
+    };
+</script>

@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>信息发布-全职招聘</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/fontcss/iconfont.css" />
+    <style>
+	.aui-list .aui-list-item-label{ width:25%;}
+	aui-input, input[type="text"], input[type="password"], input[type="search"], input[type="email"], input[type="tel"], input[type="url"], input[type="date"], input[type="datetime-local"], input[type="time"], input[type="number"], select, textarea{font-size: 0.7rem !important;}
+	.aui-list textarea{ height:auto;}
+	.aui-radio:checked, .aui-radio.aui-checked, .aui-checkbox:checked, .aui-checkbox.aui-checked{background-color:#f39b0a;border: solid 1px #f39b0a;}
+	.aui-radio, .aui-checkbox{margin-top: 0.2rem;width:0.8rem;height:0.8rem; }
+
+	.aui-list-item-label{font-size: 0.7rem !important;}
+	.aui-list-item-input{font-size: 0.7rem !important;}
+	select{font-size: 0.7rem !important;}
+
+	input[type="number"]{border-radius:4px;height: 1.3rem; margin:5px; text-align: center;}
+    </style>
+</head>
+<body>
+<div class="aui-content aui-margin-b-15" id="app" v-cloak="">
+    <div class="aui-padded-15">
+        <div class="aui-card-list-content" @click="select_cover()">
+            <img :src="cover" class="aui-img-round" style="width:4rem;margin:auto;">
+        </div>
+    </div>
+    <ul class="aui-list aui-form-list aui-shadow aui-list-noborder aui-margin-t-10 aui-margin-b-10">
+        <li class="aui-list-header aui-bg-orange aui-font-size-14" style=" color:#fff;">基本信息</li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label"> 类别:</div>
+                <div class="aui-list-item-input">
+                    <select v-model="type">
+                        <option value="1">促销/导购</option>
+                        <option value="2">传单派发</option>
+                        <option value="3">钟点工</option>
+                        <option value="4">服务员</option>
+                        <option value="5">生活配送员</option>
+                        <option value="6">护工</option>
+                        <option value="8">催乳师</option>
+                        <option value="9">问卷调查</option>
+                        <option value="10">活动营销</option>
+                        <option value="11">网络营销</option>
+                        <option value="12">游戏代练</option>
+                        <option value="13">网站建设</option>
+                        <option value="14">SEO优化</option>
+                        <option value="15">软件开发/编程</option>
+                        <option value="16">兼职测试</option>
+                        <option value="17">网络布线/维修</option>
+                        <option value="18">美工/平面设计</option>
+                        <option value="19">CAD制图/装修设计</option>
+                        <option value="20">图片处理</option>
+                    </select>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label"> 兼职名称:</div>
+                <div class="aui-list-item-input">
+                    <input type="text" placeholder="标题" v-model="name">
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label"> 招聘人数:</div>
+                <div class="aui-list-item-input" style=" line-height:36px;">
+                    <input type="number" placeholder="10" style=" width: 30%;float: left;border: 1px solid #eee;" v-model="numbers">人
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label"> 开始时间:</div>
+                <div class="aui-list-item-input">
+                    <input type="date" placeholder="开始时间" style="line-height: 44px;" v-model="freetime_morning">
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">结束时间:</div>
+                <div class="aui-list-item-input">
+                    <input type="date" placeholder="结束时间" style="line-height: 44px;" v-model="freetime_afternoon">
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">长期招聘:</div>
+                <div class="aui-list-item-input">
+                    <select v-model="is_long">
+                        <option value="1">是</option>
+                        <option value="0">否</option>
+                    </select>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label"> 薪资:</div>
+                <div class="aui-list-item-input" style=" line-height:36px;">
+                    <input type="number" placeholder="10" style=" width: 30%;float: left;border: 1px solid #eee;" v-model="salary">元/天
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">结算方式:</div>
+                <div class="aui-list-item-input">
+                    <select v-model="pay_type">
+                        <option value="1">日结</option>
+                        <option value="2">周结</option>
+                        <option value="3">日结</option>
+                        <option value="4">完工结算</option>
+                    </select>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">工作地点:</div>
+                <div class="aui-list-item-input">
+                    <input type="text" placeholder="" v-model="work_address">
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">详细描述:</div>
+                <div class="aui-list-item-input">
+                    <textarea placeholder="详细描述" v-model="desc"></textarea>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">联系人:</div>
+                <div class="aui-list-item-input">
+                    <input type="text" placeholder="联系人" v-model="contacts">
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">联系电话:</div>
+                <div class="aui-list-item-input">
+                    <input type="text" placeholder="联系电话" v-model="telephone">
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">邮箱:</div>
+                <div class="aui-list-item-input">
+                    <input type="text" placeholder="" v-model="email">
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">QQ号码:</div>
+                <div class="aui-list-item-input">
+                    <input type="number" placeholder="" v-model="qq">
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">微信:</div>
+                <div class="aui-list-item-input">
+                    <input type="text" placeholder="微信号" v-model="wechat">
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">公司名称:</div>
+                <div class="aui-list-item-input">
+                    <input type="text" placeholder="" v-model="company_name">
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">公司地址:</div>
+                <div class="aui-list-item-input">
+                    <input type="text" placeholder="" v-model="company_address">
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">公司行业类别:</div>
+                <div class="aui-list-item-input">
+                    <select v-model="company_industry">
+                        <option value="1">娱乐休闲/餐饮/服务</option>
+                        <option value="2">生产/制造</option>
+                        <option value="3">网络/通信/电信</option>
+                        <option value="4">美容美发</option>
+                        <option value="5">医疗/保健/卫生/美容</option>
+                        <option value="6">媒体/影视/文化/艺术</option>
+                        <option value="7">超市/百货/批发/零售</option>
+                        <option value="8">家政</option>
+                        <option value="9">旅游</option>
+                        <option value="10">运动健身</option>
+                        <option value="11">教育/科研/培训</option>
+                        <option value="12">房地产开发/建筑</option>
+                        <option value="13">广告/会展/创意</option>
+                        <option value="14">贸易/交通/运输/物流</option>
+                        <option value="15">物业管理/商业中心</option>
+                        <option value="16">咨询/管理产业/法律/财会</option>
+                        <option value="17">检验/检测/认证</option>
+                        <option value="18">办公用品及设备</option>
+                        <option value="19">医药/生物工程</option>
+                        <option value="20">医疗设备/器械</option>
+                    </select>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">公司类型:</div>
+                <div class="aui-list-item-input">
+                    <select v-model="company_type">
+                        <option value="1">民营</option>
+                        <option value="2">外商独资</option>
+                        <option value="3">国企</option>
+                        <option value="4">合资</option>
+                        <option value="5">股份制企业</option>
+                        <option value="6">上市公司</option>
+                        <option value="7">国家机关</option>
+                        <option value="8">事业单位</option>
+                        <option value="9">其他</option>
+                    </select>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">公司规模:</div>
+                <div class="aui-list-item-input">
+                    <select v-model="company_size">
+                        <option value="1">0-49人</option>
+                        <option value="2">50-99人</option>
+                        <option value="3">100-500人</option>
+                        <option value="4">500人以上</option>
+                    </select>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">公司简介:</div>
+                <div class="aui-list-item-input">
+                    <textarea placeholder="10-200字之间" v-model="company_intro"></textarea>
+                </div>
+            </div>
+        </li>
+    </ul>
+</div>
+</body>
+</html>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/vue.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script>
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            token: '',
+            base_url:base_url,
+            cover_url:'',
+            cover:'../../image/user_pic.png',
+            thumb:'',
+
+            type:1,//类型
+            name:'',//标题
+            numbers:10,//招聘人数
+            freetime_morning:'',
+            freetime_afternoon:'',
+            is_long:1,
+            salary:0,//薪水待遇
+            pay_type:0,
+            wechat:'',
+            work_address:'',//工作地点
+            benefits:[],//福利待遇
+            desc:'',//描述
+            contacts:'',//联系人
+            telephone:'',//手机
+            email:'',
+            qq:'',
+            company_name:'',
+            company_address:'',
+            company_industry:1,//行业类别
+            company_type:1,//公司类型
+            company_size:1,//公司规模
+            company_intro:'',//公司简介
+        },
+        methods: {
+            init: function () {
+                api.ajax({
+                    url: parttime_job_add_url,
+                    method: 'post',
+                    timeout: 30,
+                    dataType: 'json',
+                    returnAll: false,
+                    data: {
+                        values: {
+                            token: vm.token,
+                            type: vm.type,
+                            name: vm.name,
+                            numbers: vm.numbers,
+                            freetime_morning: vm.freetime_morning,
+                            freetime_afternoon: vm.freetime_afternoon,
+                            is_long: vm.is_long,
+                            salary: vm.salary,
+                            pay_type: vm.pay_type,
+                            work_address: vm.work_address,
+                            benefits: vm.benefits,
+                            desc: vm.desc,
+                            contacts: vm.contacts,
+                            telephone: vm.telephone,
+                            email: vm.email,
+                            qq: vm.qq,
+                            wechat: vm.wechat,
+                            company_name: vm.company_name,
+                            company_address: vm.company_address,
+                            company_industry: vm.company_industry,
+                            company_type: vm.company_type,
+                            company_size: vm.company_size,
+                            company_intro: vm.company_intro,
+                            thumb: vm.thumb
+                        }
+                    }
+                }, function (ret, err) {
+                    if (ret) {
+
+                        api.toast({
+                            msg: ret.msg,
+                            duration: 2000,
+                            location: 'bottom'
+                        });
+                        if(ret.status == 1){
+                            api.sendEvent({
+                                name: 'parttime_job_list_init',
+                            });
+                            setTimeout(function () {
+                                api.closeWin({
+                                    name: 'jianzhizhaopin-posted_win'
+                                });
+                            },1000)
+                        }
+                    } else {
+                        console.log(JSON.stringify(err));
+                    }
+                });
+            },
+            select_cover:function () {
+                api.getPicture({
+                    sourceType: 'library',
+                    encodingType: 'jpg',
+                    mediaValue: 'pic',
+                    destinationType: 'url',
+                    allowEdit: true,
+                    quality: 50,
+                    targetWidth: 100,
+                    targetHeight: 100,
+                    saveToPhotoAlbum: false
+                }, function(ret, err) {
+                    if (ret) {
+                        console.log(JSON.stringify(ret));
+                        if(ret.data){
+                            vm.cover = ret.data;
+                            vm.file_upload();
+                        }
+                    } else {
+                        alert(JSON.stringify(err));
+                    }
+                });
+            },
+            file_upload:function () {
+                api.ajax({
+                    url: upload_url,
+                    method: 'post',
+                    timeout: 30,
+                    dataType: 'json',
+                    returnAll: false,
+                    data: {
+                        values: {
+                            token: vm.token
+                        },
+                        files: {
+                            file: vm.cover
+                        }
+                    }
+                }, function (ret, err) {
+                    if (ret) {
+                        console.log(JSON.stringify(ret));
+                        vm.cover_url = ret.path + '/' + ret.name;
+                        vm.thumb = ret.path + '/' + ret.name;
+                    } else {
+                        console.log(JSON.stringify(err));
+                    }
+                });
+            },
+        }
+    });
+
+    apiready = function () {
+        vm.token = $api.getStorage('token');
+        api.addEventListener({
+            name: 'parttime_job_add_init'
+        }, function (ret, err) {
+            vm.init();
+        });
+    };
+</script>
+

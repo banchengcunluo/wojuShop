@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <title>限时秒杀</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <style type="text/css">
+	.timeText {height: 16px; display: inline-block;}
+	.seckill-time {
+		display: inline-block;
+		background-color: #000;
+		width: 18px;
+		height: 18px;
+		color: #fff;
+		font-size: 12px;
+		line-height: 18px;
+		text-align: center;
+		border-radius: 3px;
+		-webkit-border-radius: 3px;
+	}
+	.time-separator {margin-top: 1px;}
+	
+	.aui-list{ background:#fff; border:none;}
+	.aui-list .aui-list-item-media {width: 5rem !important;}
+	
+	.aui-progress{ width:72px; border:1px solid #ffb740; border-radius:4px;:}
+	.aui-progress-bar {
+            float: left;
+            width: 0;
+            height: 100%;
+            font-size: 0.6rem;
+            line-height: 1rem;
+            color: #ffffff;
+            text-align: center;
+            background-color: #ffb740;
+        }
+    </style>
+</head>
+<body>
+<div class="aui-content aui-padded-b-15" id="app" v-cloak="">
+	<div class="aui-row aui-text-center aui-padded-t-10 aui-padded-b-10 aui-font-size-12 aui-border-b" style="background-color: #FFFFFF;">
+        <template v-for="(vo,index) in timelist">
+            <div class="aui-col-5" v-bind:class="{'aui-text-orange':cou_index==index}" @click="changelist(index)">
+                <span class="aui-font-size-16 aui-show">{{vo}}:00</span>
+                即将开始
+            </div>
+        </template>
+    </div>
+    <div class="aui-row aui-padded-10 aui-font-size-14">
+    	<div class="aui-col-xs-6">秒杀中  先下单先得哦~</div>
+        <div class="aui-col-xs-6 aui-text-right aui-hide">
+        	<span class="time">
+                <span class="">距结束</span>
+                <div class="timeText">
+                    <span class="seckill-time">{{c_h}}</span>
+                    <span class="time-separator">:</span>
+                    <span class="seckill-time">{{c_m}}</span>
+                    <span class="time-separator">:</span>
+                    <span class="seckill-time">{{c_s}}</span>
+                </div>
+            </span>
+        </div>
+    </div>
+
+    <ul class="aui-list aui-media-list aui-margin-b-10 aui-shadow" v-for="(vo,index) in list">
+        <li class="aui-list-item aui-list-item-middle" @click="open_seckill_goods_detail(index)">
+            <div class="aui-media-list-item-inner">
+                <div class="aui-list-item-media">
+                    <img :src="cover_url + vo.thumb" class="aui-radius-4 aui-shadow">
+                </div>
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-text">
+                        <div class="aui-list-item-title aui-font-size-14 aui-ellipsis-2">
+                            {{vo.name}}
+                        </div>
+                    </div>
+                    <div class="aui-row aui-padded-t-5">
+                        <div class="aui-col-xs-4 aui-padded-t-5">
+                            <div class="aui-list-item-text aui-font-size-14  aui-text-orange">
+                                ￥{{vo.seckill_price}}
+                            </div>
+                            <div class="aui-list-item-text aui-font-size-12  aui-text-gray" style="text-decoration:line-through">
+                                ￥{{vo.market_price}}
+                            </div>
+                        </div>
+                        <div class="aui-col-xs-8 aui-text-right">
+                            <div class="aui-btn aui-btn-orange aui-font-size-12">立即秒杀</div>
+                            <div class="aui-info aui-text-right" style=" padding:0;justify-content:flex-end;">
+                                    <div class="aui-font-size-12">已售{{vo.order_num}}</div>
+                                    <div class="aui-progress aui-progress-xs">
+                                        <div class="aui-progress-bar" :style="'width:'+ vo.order_num +'%;'"></div>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </li>
+    </ul>
+</div>
+</body>
+</html>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/vue.js"></script>
+<script>
+    var timeinit = null;
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            cover_url:base_url,
+            timelist:[],
+            c_h:0,//时
+            c_m:0,//分
+            c_s:0,//秒
+            cutdowtime:'',
+            cou_index:0,
+            list: []
+        },
+        methods: {
+            init: function () {
+                api.ajax({
+                    url: seckill_time_list_url,
+                    method: 'post',
+                    timeout: 30,
+                    dataType: 'json',
+                    returnAll: false,
+                    data: {
+                        values: {
+                            name: 'values'
+                        }
+                    }
+                }, function (ret, err) {
+                    if (ret) {
+
+                        vm.timelist = ret.data;
+                        vm.changelist(0);
+                    } else {
+                        console.log(JSON.stringify(err));
+                    }
+                });
+            },
+            initlist:function (index) {
+                //vm.cut_down_time(index);
+                api.ajax({
+                    url: seckill_goods_list_url,
+                    method: 'post',
+                    timeout: 30,
+                    dataType: 'json',
+                    returnAll: false,
+                    data: {
+                        values: {
+                            time: vm.timelist[index]
+                        }
+                    }
+                }, function (ret, err) {
+                    if (ret) {
+
+                        if(ret.status == 1){
+                            vm.list = ret.data;
+                        }
+                    } else {
+                        console.log(JSON.stringify(err));
+                    }
+                });
+            },
+            changelist:function (index) {
+                vm.cou_index = index;
+                clearInterval(timeinit);
+                vm.initlist(index);
+            },
+            open_seckill_goods_detail:function (index) {
+                api.openWin({
+                    name: 'seconds_kill_detail_win',
+                    url: 'widget://html/shop/seconds_kill_detail_win.html',
+                    pageParam: {
+                        id: vm.list[index].id
+                    }
+                });
+            },
+            cut_down_time:function (index) {
+                var date = new Date();
+                vm.c_h = date.getHours() - vm.timelist[index];
+                if(vm.c_h < 0){
+                    vm.c_m = '00';
+                    vm.c_s = '00';
+                }else{
+                    vm.c_m = 60 - date.getMinutes();
+                    vm.c_s = 60 - date.getSeconds();
+                    timeinit = setInterval(function () {
+                        vm.cut_down_time(index);
+                    },1000)
+                }
+            }
+        }
+    });
+    apiready = function () {
+        vm.init();
+        api.setRefreshHeaderInfo({
+            visible: true,
+            loadingImg: 'widget://image/refresh.png',
+            bgColor: '#ccc',
+            textColor: '#fff',
+            textDown: '下拉刷新...',
+            textUp: '松开刷新...',
+            showTime: true
+        }, function (ret, err) {
+            vm.initlist(vm.cou_index);
+            setTimeout("api.refreshHeaderLoadDone()", '500');
+        });
+    };
+</script>

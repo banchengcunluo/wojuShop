@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,initial-scale=1.0,width=device-width"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>购物车</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+</head>
+<style>
+.aui-list-item-arrow:before{border: 1px solid #333;border-top: none; border-right: none;}
+</style>
+<body>
+<div class="aui-content aui-margin-t-10 aui-shadow">
+    <ul class="aui-list aui-form-list">
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label aui-font-size-14"> 收货人</div>
+                    <div class="aui-list-item-input">
+                        <input type="text" placeholder="填写名字" class="aui-font-size-14">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label aui-font-size-14">联系电话</div>
+                    <div class="aui-list-item-input">
+                        <input type="number" placeholder="填写手机号码 " class="aui-font-size-14">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner aui-list-item-arrow">
+                    <div class="aui-list-item-label aui-font-size-14">所在地区</div>
+                    <div class="aui-list-item-input">
+                        <input type="number" placeholder="请选择" class="aui-font-size-14">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner" style="line-height: 1.2em;">
+                    <div class="aui-list-item-label aui-font-size-14">详细地址</div>
+                    <div class="aui-list-item-input" style=" vertical-align:middle; overflow-x: hidden;overflow-y:visible">
+                    	<input type="text" placeholder="请输入街道、楼牌号等" class="aui-font-size-14">
+                    </div>
+                </div>
+            </li>
+        </ul>
+</div>
+<div class=" aui-margin-10 aui-margin-t-15">
+    <a href="" class="aui-btn aui-btn-block aui-btn-orange">保存</a>
+</div>	
+
+</body>
+</html>
+<script src="../../script/api.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/common.js"></script>

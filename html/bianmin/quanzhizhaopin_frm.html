@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>全职</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/fontcss/iconfont.css" />
+</head>
+<body>
+<div class="aui-content aui-padded-t-10" id="app" v-cloak="">
+    <template v-for="(vo,index) in list">
+        <div class="aui-shadow aui-bg-white aui-margin-b-10 aui-padded-10" @click="open_quanzhizhaopin_show_win(vo)">
+            <div class="aui-row aui-padded-b-10">
+                <div class="aui-col-xs-12 aui-font-size-14 aui-ellipsis-1">
+                    <template v-if="vo.type==1">餐饮</template>
+                    <template v-if="vo.type==2">家庭保洁</template>
+                    <template v-if="vo.type==3">娱乐休闲</template>
+                    <template v-if="vo.type==4">司机</template>
+                    <template v-if="vo.type==5">客服</template>
+                    <template v-if="vo.type==6">销售</template>
+                    <template v-if="vo.type==7">房产中介</template>
+                </div>
+                <div class="aui-col-xs-6">
+                    <p class="aui-font-size-12 aui-padded-t-5">
+                        <template v-if="vo.education == 0">不限</template>
+                        <template v-if="vo.education == 1">高中</template>
+                        <template v-if="vo.education == 2">大专</template>
+                        <template v-if="vo.education == 3">本科</template>
+                        <template v-if="vo.education == 4">硕士</template>
+                        <template v-if="vo.education == 5">博士</template>
+                        |
+                        <template v-if="vo.work_time==0">不限</template>
+                        <template v-if="vo.work_time==1">应届毕业生</template>
+                        <template v-if="vo.work_time==2">1-2年</template>
+                        <template v-if="vo.work_time==3">3-5年</template>
+                        <template v-if="vo.work_time==4">6-7年</template>
+                        <template v-if="vo.work_time==5">10年以上</template>
+                    </p>
+                    <p class="aui-font-size-12 aui-padded-t-5">包住 包吃 加班补助</p>
+                </div>
+                <div class="aui-col-xs-6 aui-text-right">
+                    <p class="aui-font-size-12 aui-padded-t-5">{{vo.create_time}}</p>
+                    <div class="aui-text-orange aui-padded-t-5 aui-font-size-14">
+                        <template v-if="vo.salary==0">面议</template>
+                        <template v-if="vo.salary==1">0-1000/月</template>
+                        <template v-if="vo.salary==2">1000-2000/月</template>
+                        <template v-if="vo.salary==3">2000-3000/月</template>
+                        <template v-if="vo.salary==4">3000-5000/月</template>
+                        <template v-if="vo.salary==5">5000-8000/月</template>
+                        <template v-if="vo.salary==6">8000-12000/月</template>
+                        <template v-if="vo.salary==7">12000-20000/月</template>
+                        <template v-if="vo.salary==8">20000-25000/月</template>
+                        <template v-if="vo.salary==9">25000以上</template>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+</div>
+</body>
+</html>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/vue.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script>
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            cover_url:base_url,
+            token:'',
+            list: [],
+            status:0,
+            page:1,
+            pagesize:10
+        },
+        methods: {
+            init: function () {
+                api.ajax({
+                    url: fulltime_job_list_url,
+                    method: 'post',
+                    timeout: 30,
+                    dataType: 'json',
+                    returnAll: false,
+                    data: {
+                        values: {
+                            token: vm.token,
+                            status: vm.status,
+                            page:vm.page,
+                            pagesize:vm.pagesize
+                        }
+                    }
+                }, function (ret, err) {
+                    if (ret) {
+                        if (vm.page == 1) {
+                            vm.list = ret.data.list;
+                        } else {
+                            if(ret.data.list.length == 0 ){
+                                api.toast({
+                                    msg: '加载完成',
+                                    duration: 2000,
+                                    location: 'bottom'
+                                });
+                                return false;
+                            }
+                            for (var i = 0; i < ret.data.list.length; i++) {
+                                vm.list.push(ret.data.list[i]);
+                            }
+                        }
+                        console.log(JSON.stringify(ret));
+                    } else {
+                        console.log(JSON.stringify(err));
+                    }
+                });
+            },
+            open_quanzhizhaopin_show_win:function (vo) {
+                api.openWin({
+                    name: 'quanzhizhaopin_show_win',
+                    url: 'widget://html/bianmin/quanzhizhaopin_show_win.html',
+                    pageParam: {
+                        id: vo.id
+                    }
+                });
+            },
+        }
+    });
+    apiready = function () {
+        vm.token = $api.getStorage('token');
+        vm.init();
+        api.setRefreshHeaderInfo({
+            visible: true,
+            loadingImg: 'widget://image/refresh.png',
+            bgColor: '#ccc',
+            textColor: '#fff',
+            textDown: '下拉刷新...',
+            textUp: '松开刷新...',
+            showTime: true
+        }, function (ret, err) {
+            vm.page = 1;
+            vm.init();
+            setTimeout("api.refreshHeaderLoadDone()", '500');
+        });
+
+        api.addEventListener({
+            name:'scrolltobottom',
+            extra:{
+                threshold:300
+            }
+        }, function(ret, err){
+            vm.page += 1;
+            vm.init();
+        });
+
+        api.addEventListener({
+            name: 'fulltime_list_init'
+        }, function (ret, err) {
+            vm.page = 1;
+            vm.init();
+        });
+    };
+</script>

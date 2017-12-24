@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>信息发布</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/fontcss/iconfont.css" />
+    <style>
+	.aui-list .aui-list-item-label{ width:25%;}
+	.aui-input, input[type="text"], input[type="password"], input[type="search"], input[type="email"], input[type="tel"], input[type="url"], input[type="date"], input[type="datetime-local"], input[type="time"], input[type="number"], select, textarea{font-size: 0.7rem !important;}
+	.aui-list textarea{ height:auto;}
+	.aui-radio:checked, .aui-radio.aui-checked, .aui-checkbox:checked, .aui-checkbox.aui-checked{background-color:#f39b0a;border: solid 1px #f39b0a;}
+	.aui-radio, .aui-checkbox{margin-top: 0.1rem;width:1rem;height:1rem; }
+    </style>
+</head>
+<body>
+<div class="aui-content">
+	<div class="aui-text-center aui-margin-15 aui-padded-10">
+    	<span class="iconfont icon-shangchuanzhaopian aui-text-gray aui-bg-white aui-shadow aui-radius-4 aui-padded-15" style=" font-size:2.2rem;"></span>
+    </div>
+    <ul class="aui-list aui-form-list aui-shadow aui-list-noborder aui-margin-t-10 aui-margin-b-10">
+    	<li class="aui-list-item">
+            <div class="aui-list-item-inner aui-list-item-arrow">
+                <div class="aui-list-item-label aui-font-size-14">
+                   区域
+                </div>
+                <div class="aui-list-item-input aui-font-size-14">
+                    <select>
+                        <option>区域</option>
+                    </select>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner aui-list-item-arrow">
+                <div class="aui-list-item-label aui-font-size-14">
+                   类型
+                </div>
+                <div class="aui-list-item-input">
+                    <select>
+                        <option>类型</option>
+                    </select>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label aui-font-size-14">
+                    标题
+                </div>
+                <div class="aui-list-item-input">
+                    <input type="text" placeholder="5-30字符">
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label aui-font-size-14">
+                    描述
+                </div>
+                <div class="aui-list-item-input">
+                    <textarea placeholder="最少五字"></textarea>
+                </div>
+            </div>
+        </li>
+    </ul>
+    <ul class="aui-list aui-form-list aui-shadow aui-list-noborder aui-margin-t-10 aui-margin-b-10">
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label aui-font-size-14">
+                    联系人
+                </div>
+                <div class="aui-list-item-input">
+                    <input type="text" value="tc_4329300">
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label aui-font-size-14">
+                    电  话
+                </div>
+                <div class="aui-list-item-input">
+                    <input type="text" value="187029****07">
+                </div>
+            </div>
+        </li>
+       
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label aui-font-size-14">
+                    身  份
+                </div>
+                <div class="aui-list-item-input aui-font-size-14">
+                    <label><input class="aui-radio" type="radio" name="demo1" checked=""> 个人</label>&nbsp;&nbsp;&nbsp;
+                    <label><input class="aui-radio" type="radio" name="demo1"> 中介</label>
+                </div>
+            </div>
+        </li>
+    </ul>
+    <div class="aui-padded-10 aui-font-size-14">
+    	<label><input class="aui-checkbox" type="checkbox" name="demo" checked=""> 请选择同意《蜗居乐购服务条款》</label>
+    </div>
+</div>
+</body>
+</html>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/vue.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>

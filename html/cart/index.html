@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,initial-scale=1.0,width=device-width"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>购物车</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/common.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/fontcss/iconfont.css"/>
+</head>
+<style>
+    .aui-radio:checked, .aui-radio.aui-checked, .aui-checkbox:checked, .aui-checkbox.aui-checked {
+        background-color: #f39905;
+        border: solid 1px #f39905;
+        text-align: center;
+        background-clip: padding-box;
+    }
+
+    .aui-bar-btn-item {
+        border-color: #dddddd;
+    }
+
+    .aui-margin-l-40 {
+        margin-left: 2rem !important;
+    }
+    .delete_btn{
+        border: solid 1px #ff2600;
+        border-radius: 5px;
+    }
+</style>
+<body>
+<div id="app" v-cloak>
+    <template v-if="list.length>0">
+        <div class="aui-content aui-padded-b-15 aui-bg-white aui-shadow">
+            <div class="aui-padded-10">
+                <div class="aui-list-header aui-padded-b-10">蜗居乐购自营</div>
+                <ul class="aui-list aui-media-list">
+                    <template v-if="list.length>0">
+                        <template v-for="(vo,index) in list">
+                            <li class="aui-row aui-border-b">
+                                <div class="item-checkbox aui-col-xs-1" style="padding-top:1.5rem;">
+                                    <label>
+                                        <input class="aui-radio" type="checkbox" name="checkbox"
+                                               v-model="vo.status" @click="update_cart_status(index)">
+                                    </label>
+                                </div>
+                                <div class="aui-media-list-item-inner aui-col-xs-11">
+                                    <div class="aui-list-item-media" @click="open_goodshow_win(vo)">
+                                        <template v-if="vo.goods_spec">
+                                            <img :src="cover_url + vo.goods_spec.thumb" class="aui-shadow aui-radius-4">
+                                        </template>
+                                        <template v-else>
+                                            <img :src="cover_url + vo.goods.thumb" class="aui-shadow aui-radius-4">
+                                        </template>
+                                    </div>
+                                    <div class="aui-list-item-inner">
+                                        <div class="aui-list-item-text">
+                                            <div class="aui-list-item-title aui-font-size-12 aui-ellipsis-2"
+                                                 @click="open_goodshow_win(vo)">
+                                                {{vo.goods.name}}
+                                            </div>
+                                            <div class="aui-list-item-title aui-font-size-12 aui-text-orange" @click="delete_to_cart(vo)">
+                                                删除
+                                            </div>
+                                        </div>
+                                        <template v-if="vo.goods_spec">
+                                            <div class="aui-list-item-text aui-font-size-12">{{vo.goods_spec.name}}</div>
+                                        </template>
+                                        <div class=" aui-row aui-margin-t-5">
+                                            <div class="aui-col-xs-7 aui-text-orange">
+
+                                                <template v-if="vo.goods_spec">
+                                                    <strong>￥{{vo.goods_spec.market_price}}</strong>
+                                                </template>
+                                                <template v-else>
+                                                    <strong>￥{{vo.goods.market_price}}</strong>
+                                                </template>
+                                            </div>
+                                            <div class="aui-col-xs-5 aui-pull-right">
+                                                <div class="aui-bar-btn aui-bar-btn-sm" type="count" id="demo">
+                                                    <div class="aui-bar-btn-item" @click="cutdown_to_cart(index)">
+                                                        <i class="aui-iconfont aui-icon-minus aui-font-size-12"></i>
+                                                    </div>
+                                                    <div class="aui-bar-btn-item">
+                                                        <input type="number" disabled class="aui-input aui-text-center aui-font-size-12" id="count" v-model="vo.goods_num">
+                                                    </div>
+                                                    <div class="aui-bar-btn-item" @click="add_to_cart(index)">
+                                                        <i class="aui-iconfont aui-icon-plus aui-font-size-12"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </template>
+                    </template>
+
+                </ul>
+            </div>
+        </div>
+        <footer class="aui-bar aui-bar-tab">
+            <div class="aui-col-xs-3 aui-text-center aui-padded-t-15 aui-font-size-16">
+                <label><input class="aui-radio" type="checkbox" name="checkbox" v-model="all_check"> 全选</label>
+            </div>
+            <div class="aui-col-xs-6 aui-text-right aui-padded-t-5 aui-padded-r-10">
+                <p class="aui-text-black aui-font-size-16">总计：￥{{total_price}}</p>
+                <p class="aui-font-size-12">不含运费</p>
+            </div>
+            <template v-if="total_num>0">
+                <div class="aui-col-xs-3" onclick="open_window('cart','order_confirm_win')">
+                    <a href="javascript:void(0);" class="aui-btn aui-btn-orange aui-btn-block aui-font-size-16" style="border-radius:0;">
+                        去结算({{total_num}})
+                    </a>
+                </div>
+            </template>
+            <template v-else>
+                <div class="aui-col-xs-3" onclick="alert('请选择要结算的商品')">
+                    <a href="javascript:void(0);" class="aui-btn aui-btn-orange aui-btn-block aui-font-size-16" style="border-radius:0;">
+                        去结算({{total_num}})
+                    </a>
+                </div>
+            </template>
+
+        </footer>
+    </template>
+    <template v-else>
+        <div class="aui-card-list" style=" background:transparent; margin-top:40%;">
+            <div class="aui-card-list-content">
+                <img src="../../image/img-empty.png" style=" width:6rem;width:6rem; margin:auto">
+            </div>
+            <div class="aui-card-list-footer aui-text-center aui-font-size-14 aui-margin-t-10">您的购物车还是空的，添加点商品吧！</div>
+        </div>
+        <div class="aui-margin-t-10 aui-text-center" onclick="set_show_shop()">
+            <a href="" class="aui-btn aui-btn-orange">快去逛逛吧~</a>
+        </div>
+    </template>
+
+</div>
+</body>
+</html>
+<script src="../../script/api.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/common.js"></script>
+<script>
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            token: '',
+            cover_url: base_url,
+            list: [],
+            total_price: 0.00,
+            total_num: 0,
+            all_check: false
+        },
+        methods: {
+            init: function (index) {
+
+                api.ajax({
+                    url: cart_list_url,
+                    method: 'post',
+                    timeout: 30,
+                    dataType: 'json',
+                    returnAll: false,
+                    data: {
+                        values: {
+                            token: vm.token
+                        }
+                    }
+                }, function (ret, err) {
+                    console.log(JSON.stringify(ret));
+                    if (ret) {
+                        if (ret.status == 1) {
+                            vm.list = ret.data.cart_list;
+                            var total_price = parseFloat(ret.data.total_price)
+                            vm.total_price = total_price.toFixed(2);
+                            vm.total_num = ret.data.total_num;
+                        } else {
+                            vm.list = [];
+                            vm.total_price = 0.00;
+                            vm.total_num = 0;
+                            vm.all_check = false;
+                        }
+
+                    } else {
+                        console.log(JSON.stringify(err));
+                    }
+                });
+            },
+            open_goodshow_win: function (vo) {
+                api.openWin({
+                    name: 'goodshow_win',
+                    url: 'widget://html/shop/goodshow_win.html',
+                    pageParam: {
+                        id: vo.goods_id
+                    }
+                });
+            },
+            update_cart_status: function (index) {
+                if (vm.list[index].status) {
+                    var parm = {
+                        token: vm.token,
+                        spec_id: vm.list[index].spec_id ? vm.list[index].spec_id : 0,
+                        goods_id: vm.list[index].goods_id,
+                        status: 1
+                    }
+                } else {
+                    var parm = {
+                        token: vm.token,
+                        spec_id: vm.list[index].spec_id ? vm.list[index].spec_id : 0,
+                        goods_id: vm.list[index].goods_id,
+                        status: 0
+                    }
+                }
+                ;
+                //console.log(JSON.stringify(parm));return false;
+                api.ajax({
+                    url: update_cart_status_url,
+                    method: 'post',
+                    timeout: 30,
+                    dataType: 'json',
+                    returnAll: false,
+                    data: {
+                        values: parm
+                    }
+                }, function (ret, err) {
+                    if (ret) {
+
+                        if (ret.status == 1) {
+                            vm.init();
+                        }
+                    } else {
+                        console.log(JSON.stringify(err));
+                    }
+                });
+            },
+            update_allcart_status: function (index) {
+                api.ajax({
+                    url: update_allcart_status_url,
+                    method: 'post',
+                    timeout: 30,
+                    dataType: 'json',
+                    returnAll: false,
+                    data: {
+                        values: {
+                            token: vm.token,
+                            status: index
+                        }
+                    }
+                }, function (ret, err) {
+                    if (ret) {
+
+                        if (ret.status == 1) {
+                            vm.init();
+                        }
+                    } else {
+                        console.log(JSON.stringify(err));
+                    }
+                });
+            },
+            add_to_cart: function (index) {
+                api.ajax({
+                    url: add_to_cart_url,
+                    method: 'post',
+                    timeout: 30,
+                    dataType: 'json',
+                    returnAll: false,
+                    data: {
+                        values: {
+                            token: vm.token,
+                            spec_id: vm.list[index].spec_id ? vm.list[index].spec_id : 0,
+                            goods_id: vm.list[index].goods_id,
+                            goods_num: 1
+                        }
+                    }
+                }, function (ret, err) {
+                    if (ret) {
+
+                        api.toast({
+                            msg: ret.msg,
+                            duration: 2000,
+                            location: 'bottom'
+                        });
+                        if (ret.status == 1) {
+                            vm.init();
+                        }
+                    } else {
+                        console.log(JSON.stringify(err));
+                    }
+                });
+            },
+            cutdown_to_cart: function (index) {
+                api.ajax({
+                    url: cutdown_to_cart_url,
+                    method: 'post',
+                    timeout: 30,
+                    dataType: 'json',
+                    returnAll: false,
+                    data: {
+                        values: {
+                            token: vm.token,
+                            spec_id: vm.list[index].spec_id ? vm.list[index].spec_id : 0,
+                            goods_id: vm.list[index].goods_id,
+                            goods_num: 1
+                        }
+                    }
+                }, function (ret, err) {
+                    if (ret) {
+
+                        api.toast({
+                            msg: ret.msg,
+                            duration: 2000,
+                            location: 'bottom'
+                        });
+                        if (ret.status == 1) {
+                            vm.init();
+                        }
+                    } else {
+                        console.log(JSON.stringify(err));
+                    }
+                });
+            },
+            delete_to_cart: function (vo) {
+                api.ajax({
+                    url: delete_to_cart_url,
+                    method: 'post',
+                    timeout: 30,
+                    dataType: 'json',
+                    returnAll: false,
+                    data: {
+                        values: {
+                            token: vm.token,
+                            id: vo.id
+                        }
+                    }
+                }, function (ret, err) {
+                    if (ret) {
+                        console.log(JSON.stringify(ret));
+                        api.toast({
+                            msg: ret.msg,
+                            duration: 2000,
+                            location: 'bottom'
+                        });
+                        if (ret.status == 1) {
+                            vm.init();
+                        }
+                    } else {
+                        console.log(JSON.stringify(err));
+                    }
+                });
+            }
+
+        },
+        watch: {
+            all_check: {
+                handler: function (val, oldVal) {
+                    if (val == true) {
+                        vm.update_allcart_status(1);
+                    } else {
+                        vm.update_allcart_status(0);
+                    }
+                },
+                deep: true
+            }
+        }
+    });
+    apiready = function () {
+        vm.token = $api.getStorage('token');
+        if (vm.token) {
+            vm.init();
+        }
+        api.setRefreshHeaderInfo({
+            visible: true,
+            loadingImg: 'widget://image/refresh.png',
+            bgColor: '#ccc',
+            textColor: '#fff',
+            textDown: '下拉刷新...',
+            textUp: '松开刷新...',
+            showTime: true
+        }, function (ret, err) {
+            vm.token = $api.getStorage('token');
+            vm.init();
+            setTimeout("api.refreshHeaderLoadDone()", '500');
+        });
+
+        //监听购物车变化
+        api.addEventListener({
+            name: 'cart_list_init'
+        }, function (ret, err) {
+            vm.token = $api.getStorage('token');
+            vm.init();
+        });
+    };
+</script>
